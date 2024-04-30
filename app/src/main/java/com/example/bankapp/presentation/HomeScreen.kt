@@ -1,16 +1,21 @@
 package com.example.bankapp.presentation
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.*
@@ -25,21 +30,34 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.layout.ContentScale
 import com.example.bankapp.R
+import com.example.bankapp.data.model.LastTranscations
+import com.example.bankapp.presentation.Intent.ViewIntent
+import com.example.bankapp.presentation.Intent.ViewState
+import com.example.bankapp.presentation.ViewModel.HomeViewModel
 
 
 @Composable
-fun HomeScreen() {
+fun HomeScreen(homeViewModel: HomeViewModel = HomeViewModel()) {
+    val state = homeViewModel.state.collectAsState().value
+
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .verticalScroll(rememberScrollState())
             .background(Color(0xFF514eac))
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        GreetingHeader()
-        AccountBalanceSection()
-        QuickSendSection()
-        LastTransactionSection()
+        when (state) {
+            is ViewState.Loading -> CircularProgressIndicator()
+            is ViewState.Success -> {
+                GreetingHeader()
+                AccountBalanceSection()
+                QuickSendSection()
+                LastTransactionSection(state.transactions)
+            }
+            is ViewState.Error -> Text("Error: ${state.exception.message}")
+        }
     }
 }
 
@@ -69,12 +87,14 @@ fun GreetingHeader() {
 
 @Composable
 fun NotificationIcon() {
-    Icon(
-        imageVector = Icons.Default.Notifications,
-        contentDescription = "Profile Icon",
-        tint = Color.White,
-        modifier = Modifier.size(30.dp)
-    )
+    IconButton(onClick = { /*TODO*/ }) {
+        Icon(
+            imageVector = Icons.Default.Notifications,
+            contentDescription = "Profile Icon",
+            tint = Color.White,
+            modifier = Modifier.size(30.dp)
+        )
+    }
 }
 
 @Composable
@@ -200,23 +220,28 @@ fun QuickSendContact(name: String, imageRes: Int) {
 }
 
 @Composable
-fun LastTransactionSection() {
+fun LastTransactionSection(transcations: List<LastTranscations>) {
     Column(
         modifier = Modifier.fillMaxWidth()
     ) {
         SectionHeader(title = "Last Transaction", actionText = "View all")
-        LastTransactionsList()
+        LastTransactionsList(transcations)
     }
 }
 
 @Composable
-fun LastTransactionsList() {
+fun LastTransactionsList(transcations: List<LastTranscations>) {
     Column(
         modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        LastTransaction("PayPal", "$100", "Today, 10:00 AM")
-        LastTransaction("Alex Buckmaster", "$50", "618 474-9169")
+        repeat(transcations.size){
+            LastTransaction(
+                transcations[it].name,
+                transcations[it].price.toString(),
+                transcations[it].timeOrPhoneNumber
+            )
+        }
     }
 }
 
@@ -242,7 +267,7 @@ fun LastTransaction(title: String, amount: String, description: String) {
             )
         }
         Text(
-            text = amount,
+            text = "$ $amount",
             fontWeight = FontWeight.Bold,
             fontSize = 16.sp,
             color = Color.White
