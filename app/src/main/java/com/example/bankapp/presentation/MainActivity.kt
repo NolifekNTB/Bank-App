@@ -22,7 +22,12 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         //enableEdgeToEdge()
         setContent {
-            AppNavigation(auth = auth)
+            val user = FirebaseAuth.getInstance().currentUser
+            if (user != null) {
+                HomeScreen()
+            } else {
+                AppNavigation(auth = auth)
+            }
         }
     }
 }

@@ -213,7 +213,6 @@ fun QuickSendContacts(allUsers: List<User>) {
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceEvenly
     ) {
-        Log.d("testowanie", allUsers.toString())
         if(allUsers.isNotEmpty() && allUsers.size <= 5){
             LazyRow(
                 modifier = Modifier.fillMaxWidth(),
