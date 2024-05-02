@@ -53,12 +53,18 @@ android {
 }
 
 dependencies {
+    //Glide
+    implementation (libs.glide)
+    implementation (libs.glide.compose)
+
+
     //Navigation
     implementation (libs.androidx.navigation.compose)
 
     //FireBase
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.auth)
+    implementation(libs.firebase.firestore.ktx)
 
     implementation(libs.library.base)
     implementation(libs.androidx.core.ktx)

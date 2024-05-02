@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
@@ -29,17 +30,34 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import com.bumptech.glide.Glide
+import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
+import com.bumptech.glide.integration.compose.GlideImage
 import com.example.bankapp.R
 import com.example.bankapp.data.model.LastTranscations
+import com.example.bankapp.data.model.User
 import com.example.bankapp.presentation.Intent.ViewIntent
 import com.example.bankapp.presentation.Intent.ViewState
 import com.example.bankapp.presentation.ViewModel.HomeViewModel
+import com.google.firebase.auth.FirebaseAuth
+import io.grpc.Context
 
 
 @Composable
 fun HomeScreen(homeViewModel: HomeViewModel = HomeViewModel()) {
-    val state = homeViewModel.state.collectAsState().value
+    val userId = FirebaseAuth.getInstance().currentUser?.uid!!
+    var user by remember { mutableStateOf<User?>(null) }
+    var allUsers by remember { mutableStateOf<List<User>>(emptyList()) } //TODO: only friends
 
+    LaunchedEffect(userId) {
+        homeViewModel.fetchUserData(userId) { fetchedUser ->
+            user = fetchedUser
+        }
+        allUsers = homeViewModel.fetchUserProfiles()
+    }
+
+    val state = homeViewModel.state.collectAsState().value
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -51,10 +69,14 @@ fun HomeScreen(homeViewModel: HomeViewModel = HomeViewModel()) {
         when (state) {
             is ViewState.Loading -> CircularProgressIndicator()
             is ViewState.Success -> {
-                GreetingHeader()
-                AccountBalanceSection()
-                QuickSendSection()
-                LastTransactionSection(state.transactions)
+                if(user != null){
+                    GreetingHeader(user!!.name)
+                    AccountBalanceSection(user!!.balance)
+                    QuickSendSection(allUsers)
+                    LastTransactionSection(state.transactions)
+                } else {
+                    Text(text = "Loading user data")
+                }
             }
             is ViewState.Error -> Text("Error: ${state.exception.message}")
         }
@@ -62,7 +84,7 @@ fun HomeScreen(homeViewModel: HomeViewModel = HomeViewModel()) {
 }
 
 @Composable
-fun GreetingHeader() {
+fun GreetingHeader(name: String) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
@@ -75,7 +97,7 @@ fun GreetingHeader() {
                 color = Color.White
             )
             Text(
-                text = "Autumn Phillips \uD83D\uDD90\uFE0F",
+                text = "Autumn $name \uD83D\uDD90\uFE0F",
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color.White
@@ -98,7 +120,7 @@ fun NotificationIcon() {
 }
 
 @Composable
-fun AccountBalanceSection() {
+fun AccountBalanceSection(balance: Double) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         elevation = CardDefaults.elevatedCardElevation(8.dp)
@@ -114,16 +136,16 @@ fun AccountBalanceSection() {
                 color = Color.White
             )
             Spacer(modifier = Modifier.height(8.dp))
-            AccountBalanceValue()
+            AccountBalanceValue(balance)
             ActionButtons()
         }
     }
 }
 
 @Composable
-fun AccountBalanceValue() {
+fun AccountBalanceValue(balance: Double) {
     Text(
-        text = "$9,876.52",
+        text = "$ $balance",
         fontSize = 36.sp,
         fontWeight = FontWeight.Bold,
         color = Color.White
@@ -153,12 +175,12 @@ fun ActionButton(text: String, color: Color) {
 }
 
 @Composable
-fun QuickSendSection() {
+fun QuickSendSection(allUsers: List<User>) {
     Column(
         modifier = Modifier.fillMaxWidth()
     ) {
         SectionHeader(title = "Quick Send", actionText = "View all")
-        QuickSendContacts()
+        QuickSendContacts(allUsers)
     }
 }
 
@@ -186,31 +208,40 @@ fun SectionHeader(title: String, actionText: String) {
 }
 
 @Composable
-fun QuickSendContacts() {
+fun QuickSendContacts(allUsers: List<User>) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceEvenly
     ) {
-        QuickSendContact("Alex Buck", R.drawable.pictureprofile1)
-        QuickSendContact("Kimberly Green", R.drawable.pictureprofile2)
-        QuickSendContact("Mary French", R.drawable.pictureprofile3)
-        QuickSendContact("Stephanie Lee", R.drawable.pictureprofile4)
+        Log.d("testowanie", allUsers.toString())
+        if(allUsers.isNotEmpty() && allUsers.size <= 5){
+            LazyRow(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceEvenly
+            ){
+                items(allUsers.size){ index ->
+                    QuickSendContact(name = allUsers[index].name, imageRes = allUsers[index].profilePicUrl)
+                }
+            }
+        }
     }
 }
 
+@OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun QuickSendContact(name: String, imageRes: Int) {
+fun QuickSendContact(name: String, imageRes: String) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Image(
-            painter = painterResource(id = imageRes),
-            contentDescription = null,
+        GlideImage(
+            model = imageRes,
+            contentScale = ContentScale.Crop,
+            contentDescription = "Profile Image",
             modifier = Modifier
                 .size(48.dp)
-                .clip(CircleShape),
-            contentScale = ContentScale.Crop
+                .clip(CircleShape)
         )
+
         Text(
             text = name,
             fontSize = 14.sp,
