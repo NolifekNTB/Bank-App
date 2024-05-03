@@ -1,4 +1,4 @@
-package com.example.bankapp.domain.repository
+package com.example.bankapp.data.repository
 
 abstract class LastTranscationsRepo<T> {
     abstract fun add(item: T)

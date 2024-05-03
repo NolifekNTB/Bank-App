@@ -1,4 +1,4 @@
-package com.example.bankapp.presentation.ViewModel
+package com.example.bankapp.presentation.home
 
 
 import android.util.Log
@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.bankapp.data.model.LastTranscations
 import com.example.bankapp.data.model.User
-import com.example.bankapp.domain.repository.LastTranscationsImpl
+import com.example.bankapp.data.repository.LastTranscationsImpl
 import com.example.bankapp.presentation.Intent.ViewIntent
 import com.example.bankapp.presentation.Intent.ViewState
 import com.google.firebase.auth.FirebaseAuth

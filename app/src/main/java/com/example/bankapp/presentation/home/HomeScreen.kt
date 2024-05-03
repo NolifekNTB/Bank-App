@@ -1,7 +1,5 @@
-package com.example.bankapp.presentation
+package com.example.bankapp.presentation.home
 
-import android.util.Log
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
@@ -24,24 +22,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
-import com.bumptech.glide.Glide
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
-import com.example.bankapp.R
 import com.example.bankapp.data.model.LastTranscations
 import com.example.bankapp.data.model.User
-import com.example.bankapp.presentation.Intent.ViewIntent
 import com.example.bankapp.presentation.Intent.ViewState
-import com.example.bankapp.presentation.ViewModel.HomeViewModel
 import com.google.firebase.auth.FirebaseAuth
-import io.grpc.Context
 
 
 @Composable

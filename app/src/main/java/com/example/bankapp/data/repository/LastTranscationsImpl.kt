@@ -1,8 +1,7 @@
-package com.example.bankapp.domain.repository
+package com.example.bankapp.data.repository
 
 import com.example.bankapp.data.model.LastTranscations
 import com.example.bankapp.di.MyApp
-import io.realm.kotlin.Realm
 
 class LastTranscationsImpl : LastTranscationsRepo<LastTranscations>() {
     private val realm = MyApp.realm
