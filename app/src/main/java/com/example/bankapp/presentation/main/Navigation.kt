@@ -12,6 +12,7 @@ import com.google.firebase.auth.FirebaseAuth
 @Composable
 fun AppNavigation(auth: FirebaseAuth) {
     val navController = rememberNavController()
+
     NavHost(navController = navController, startDestination = "login") {
         composable("login") {
             LoginScreen(auth, navController)

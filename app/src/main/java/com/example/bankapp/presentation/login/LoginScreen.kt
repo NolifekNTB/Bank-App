@@ -114,7 +114,8 @@ fun registerUser(auth: FirebaseAuth, email: String, password: String, callback: 
                 callback("Registration failed: ${task.exception?.message}")
             }
         }
-}
+    }
+//TODO: log out method
 
 
 

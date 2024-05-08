@@ -29,8 +29,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.layout.ContentScale
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
-import com.example.bankapp.data.model.LastTranscations
+import com.example.bankapp.data.model.LastTransactions
 import com.example.bankapp.data.model.User
+import com.example.bankapp.presentation.Intent.ViewIntent
 import com.example.bankapp.presentation.Intent.ViewState
 import com.google.firebase.auth.FirebaseAuth
 
@@ -38,17 +39,15 @@ import com.google.firebase.auth.FirebaseAuth
 @Composable
 fun HomeScreen(homeViewModel: HomeViewModel = HomeViewModel()) {
     val userId = FirebaseAuth.getInstance().currentUser?.uid!!
-    var user by remember { mutableStateOf<User?>(null) }
-    var allUsers by remember { mutableStateOf<List<User>>(emptyList()) } //TODO: only friends
+    val state = homeViewModel.state.collectAsState().value
+    val transaction = LastTransactions("Food", 200.0,
+        "1234567890", "Food")
 
-    LaunchedEffect(userId) {
-        homeViewModel.fetchUserData(userId) { fetchedUser ->
-            user = fetchedUser
-        }
-        allUsers = homeViewModel.fetchUserProfiles()
+    LaunchedEffect(key1 = userId) {
+        homeViewModel.processIntent(ViewIntent.addTransaction(transaction))
+        homeViewModel.processIntent(ViewIntent.LoadData(userId))
     }
 
-    val state = homeViewModel.state.collectAsState().value
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -59,12 +58,12 @@ fun HomeScreen(homeViewModel: HomeViewModel = HomeViewModel()) {
     ) {
         when (state) {
             is ViewState.Loading -> CircularProgressIndicator()
-            is ViewState.Success -> {
-                if(user != null){
-                    GreetingHeader(user!!.name)
-                    AccountBalanceSection(user!!.balance)
-                    QuickSendSection(allUsers)
-                    LastTransactionSection(state.transactions)
+            is ViewState.DataLoaded -> {
+                if(state.user != null){
+                    GreetingHeader(state.user.name)
+                    AccountBalanceSection(state.user.balance)
+                    QuickSendSection(state.allUsers)
+                    LastTransactionSection(state.user.lastTransactions)
                 } else {
                     Text(text = "Loading user data")
                 }
@@ -241,7 +240,7 @@ fun QuickSendContact(name: String, imageRes: String) {
 }
 
 @Composable
-fun LastTransactionSection(transcations: List<LastTranscations>) {
+fun LastTransactionSection(transcations: List<LastTransactions>) {
     Column(
         modifier = Modifier.fillMaxWidth()
     ) {
@@ -251,16 +250,16 @@ fun LastTransactionSection(transcations: List<LastTranscations>) {
 }
 
 @Composable
-fun LastTransactionsList(transcations: List<LastTranscations>) {
+fun LastTransactionsList(transcations: List<LastTransactions>) {
     Column(
         modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        repeat(transcations.size){
+        repeat(transcations.size){ index ->
             LastTransaction(
-                transcations[it].name,
-                transcations[it].price.toString(),
-                transcations[it].timeOrPhoneNumber
+                title = transcations[index].name,
+                amount = transcations[index].price.toString(),
+                description = transcations[index].timeOrPhoneNumber
             )
         }
     }
