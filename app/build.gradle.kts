@@ -53,6 +53,10 @@ android {
 }
 
 dependencies {
+    //Koin
+    implementation (libs.koin.android)
+    implementation (libs.insert.koin.koin.androidx.compose)
+
     //Glide
     implementation (libs.glide)
     implementation (libs.glide.compose)

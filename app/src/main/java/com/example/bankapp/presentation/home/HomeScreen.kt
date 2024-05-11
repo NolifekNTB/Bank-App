@@ -1,5 +1,6 @@
 package com.example.bankapp.presentation.home
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
@@ -27,26 +28,27 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.layout.ContentScale
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
-import com.example.bankapp.data.model.LastTransactions
-import com.example.bankapp.data.model.User
-import com.example.bankapp.presentation.Intent.ViewIntent
-import com.example.bankapp.presentation.Intent.ViewState
+import com.example.bankapp.data.model.firebase.FriendFireStore
+import com.example.bankapp.data.model.realm.LastTransactionsRealm
+import com.example.bankapp.presentation.IntentAndStates.ViewIntent
+import com.example.bankapp.presentation.IntentAndStates.ViewState
 import com.google.firebase.auth.FirebaseAuth
 
 
 @Composable
-fun HomeScreen(homeViewModel: HomeViewModel = HomeViewModel()) {
-    val userId = FirebaseAuth.getInstance().currentUser?.uid!!
+fun HomeScreen(homeViewModel: HomeViewModel = viewModel()) {
     val state = homeViewModel.state.collectAsState().value
-    val transaction = LastTransactions("Food", 200.0,
-        "1234567890", "Food")
 
+    Log.d("testowanie", state.toString())
+
+    val userId = FirebaseAuth.getInstance().currentUser?.uid!!
     LaunchedEffect(key1 = userId) {
-        homeViewModel.processIntent(ViewIntent.addTransaction(transaction))
         homeViewModel.processIntent(ViewIntent.LoadData(userId))
     }
+
 
     Column(
         modifier = Modifier
@@ -165,7 +167,7 @@ fun ActionButton(text: String, color: Color) {
 }
 
 @Composable
-fun QuickSendSection(allUsers: List<User>) {
+fun QuickSendSection(allUsers: List<FriendFireStore>) {
     Column(
         modifier = Modifier.fillMaxWidth()
     ) {
@@ -198,7 +200,7 @@ fun SectionHeader(title: String, actionText: String) {
 }
 
 @Composable
-fun QuickSendContacts(allUsers: List<User>) {
+fun QuickSendContacts(allUsers: List<FriendFireStore>) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceEvenly
@@ -240,7 +242,7 @@ fun QuickSendContact(name: String, imageRes: String) {
 }
 
 @Composable
-fun LastTransactionSection(transcations: List<LastTransactions>) {
+fun LastTransactionSection(transcations: List<LastTransactionsRealm>) {
     Column(
         modifier = Modifier.fillMaxWidth()
     ) {
@@ -250,7 +252,7 @@ fun LastTransactionSection(transcations: List<LastTransactions>) {
 }
 
 @Composable
-fun LastTransactionsList(transcations: List<LastTransactions>) {
+fun LastTransactionsList(transcations: List<LastTransactionsRealm>) {
     Column(
         modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(8.dp)

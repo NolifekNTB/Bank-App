@@ -4,11 +4,13 @@ package com.example.bankapp.presentation.home
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.bankapp.data.model.LastTransactions
-import com.example.bankapp.data.model.User
+import com.example.bankapp.data.model.firebase.LastTransactionsFireStore
+import com.example.bankapp.data.model.firebase.UserFireStore
+import com.example.bankapp.data.model.mappers.mapUserFireStoreToUserRealm
 import com.example.bankapp.data.repository.FirebaseRepository
-import com.example.bankapp.presentation.Intent.ViewIntent
-import com.example.bankapp.presentation.Intent.ViewState
+import com.example.bankapp.data.repository.LastTranscationsImpl
+import com.example.bankapp.presentation.IntentAndStates.ViewIntent
+import com.example.bankapp.presentation.IntentAndStates.ViewState
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -16,33 +18,12 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-class HomeViewModel: ViewModel() {
-    //private val repoRealm = LastTranscationsImpl()
-    private val repoFirebase = FirebaseRepository()
-
+class HomeViewModel(
+    val repoRealm: LastTranscationsImpl,
+    val repoFirebase: FirebaseRepository
+): ViewModel() {
     private val _state = MutableStateFlow<ViewState>(ViewState.Loading)
     val state: StateFlow<ViewState> = _state.asStateFlow()
-
-    fun loadData(userId: String) {
-        viewModelScope.launch {
-            _state.value = ViewState.Loading
-            try {
-                val userDeferred = async { repoFirebase.fetchUserData(userId) }
-                val allUsersDeferred = async { repoFirebase.fetchUserProfiles() }
-
-                val user = userDeferred.await()
-                val allUsers = allUsersDeferred.await()
-
-                if (user != null && allUsers.isNotEmpty()) {
-                    _state.value = ViewState.DataLoaded(user, allUsers)
-                } else {
-                    _state.value = ViewState.Error(Exception("Failed to load all data"))
-                }
-            } catch (e: Exception) {
-                _state.value = ViewState.Error(e)
-            }
-        }
-    }
 
     fun processIntent(intent: ViewIntent) {
         when (intent) {
@@ -56,6 +37,63 @@ class HomeViewModel: ViewModel() {
 
              */
         }
+    }
+
+    private fun loadData(userId: String) {
+        viewModelScope.launch {
+
+            val cachedUserData = repoRealm.getLoggedUser(userId)
+
+            if (cachedUserData != null && cachedUserData.userId.isNotEmpty()) {
+                _state.value = ViewState.DataLoaded(cachedUserData, emptyList()) //TODO: allUsers
+            }
+
+            try {
+                val userDeferred = async { repoFirebase.fetchUserData(userId) }
+                val allUsers = async { repoFirebase.fetchUserProfiles() }
+
+                val user = userDeferred.await()
+                val users = allUsers.await()
+
+                if (user != null) {
+                    repoRealm.replaceTransactions(user)
+                    _state.value = ViewState.DataLoaded(
+                        mapUserFireStoreToUserRealm(user),
+                        users
+                    )
+                }
+
+            } catch (e: Exception) {
+                _state.value = ViewState.Error(e)
+                Log.d("testowanie", "Error loading user data", e)
+            }
+        }
+    }
+
+
+    fun createUserProfile(
+        name: String, email: String, phone: String, profilePicUrl: String
+    ) {
+        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
+        val transactions = listOf(
+            LastTransactionsFireStore(
+                name = "Anna Nowak",
+                price = 100.0,
+                timeOrPhoneNumber = "123456789",
+                iconLogo = "https://example.com/anna.png"
+            )
+        )
+        val user = UserFireStore(userId, name, email, phone, profilePicUrl, 0.0, transactions)
+
+        repoFirebase.createUserProfile(user,
+            onSuccess = { Log.d("testowanie", "User profile created successfully.") },
+            onFailure = { e -> Log.d("testowanie", "Error creating user profile", e) }
+        )
+    }
+
+    fun addNewTransaction(transaction: LastTransactionsFireStore) {
+        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
+        repoFirebase.addTransaction(transaction, userId)
     }
     /*private fun loadTransactions(userId: String = "") {
         viewModelScope.launch {
@@ -116,29 +154,5 @@ class HomeViewModel: ViewModel() {
 
 
      */
-    fun createUserProfile(
-        name: String, email: String, phone: String, profilePicUrl: String
-    ) {
-        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
-        val transactions = listOf(
-            LastTransactions(
-                name = "Anna Nowak",
-                price = 100.0,
-                timeOrPhoneNumber = "123456789",
-                iconLogo = "https://example.com/anna.png"
-            )
-        )
-        val user = User(userId, name, email, phone, profilePicUrl, 0.0, transactions)
-
-        repoFirebase.createUserProfile(user,
-            onSuccess = { Log.d("testowanie", "User profile created successfully.") },
-            onFailure = { e -> Log.d("testowanie", "Error creating user profile", e) }
-        )
-    }
-
-    fun addNewTransaction(transaction: LastTransactions) {
-        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
-        repoFirebase.addTransaction(transaction, userId)
-    }
 
 }
