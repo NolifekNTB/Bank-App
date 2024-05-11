@@ -36,10 +36,11 @@ import com.example.bankapp.data.model.realm.LastTransactionsRealm
 import com.example.bankapp.presentation.IntentAndStates.ViewIntent
 import com.example.bankapp.presentation.IntentAndStates.ViewState
 import com.google.firebase.auth.FirebaseAuth
+import org.koin.androidx.compose.getViewModel
 
 
 @Composable
-fun HomeScreen(homeViewModel: HomeViewModel = viewModel()) {
+fun HomeScreen(homeViewModel: HomeViewModel = getViewModel()) {
     val state = homeViewModel.state.collectAsState().value
 
     Log.d("testowanie", state.toString())
