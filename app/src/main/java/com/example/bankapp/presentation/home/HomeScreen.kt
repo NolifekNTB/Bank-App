@@ -172,8 +172,10 @@ fun QuickSendSection(allUsers: List<FriendFireStore>) {
     Column(
         modifier = Modifier.fillMaxWidth()
     ) {
-        SectionHeader(title = "Quick Send", actionText = "View all")
-        QuickSendContacts(allUsers)
+        if(allUsers.isNotEmpty()){
+            SectionHeader(title = "Quick Send", actionText = "View all")
+            QuickSendContacts(allUsers)
+        }
     }
 }
 
