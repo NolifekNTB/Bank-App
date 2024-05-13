@@ -3,6 +3,7 @@ package com.example.bankapp.di
 import com.example.bankapp.data.repository.FirebaseRepository
 import com.example.bankapp.data.repository.LastTranscationsImpl
 import com.example.bankapp.presentation.home.HomeViewModel
+import com.example.bankapp.presentation.login.AuthViewModel
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.firestoreSettings
 import org.koin.androidx.viewmodel.dsl.viewModel
@@ -16,6 +17,10 @@ val appModule = module {
             get(),
             get()
         )
+    }
+
+    viewModel{
+        AuthViewModel()
     }
 
     single {

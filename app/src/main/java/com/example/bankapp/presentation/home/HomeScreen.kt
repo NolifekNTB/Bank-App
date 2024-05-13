@@ -2,6 +2,7 @@ package com.example.bankapp.presentation.home
 
 import android.util.Log
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.rememberScrollState
@@ -40,14 +41,20 @@ import org.koin.androidx.compose.getViewModel
 
 
 @Composable
-fun HomeScreen(homeViewModel: HomeViewModel = getViewModel()) {
+fun HomeScreen(
+    auth: FirebaseAuth,
+    homeViewModel: HomeViewModel = getViewModel(),
+    onLogout : () -> Unit
+) {
     val state = homeViewModel.state.collectAsState().value
-
-    Log.d("testowanie", state.toString())
 
     val userId = FirebaseAuth.getInstance().currentUser?.uid!!
     LaunchedEffect(key1 = userId) {
         homeViewModel.processIntent(ViewIntent.LoadData(userId))
+    }
+
+    LaunchedEffect(key1 = onLogout) {
+        Log.d("testowanie", "testing works")
     }
 
 
@@ -67,6 +74,7 @@ fun HomeScreen(homeViewModel: HomeViewModel = getViewModel()) {
                     AccountBalanceSection(state.user.balance)
                     QuickSendSection(state.allUsers)
                     LastTransactionSection(state.user.lastTransactions)
+                    logOutMethod(auth, onLogout)
                 } else {
                     Text(text = "Loading user data")
                 }
@@ -297,5 +305,21 @@ fun LastTransaction(title: String, amount: String, description: String) {
             fontSize = 16.sp,
             color = Color.White
         )
+    }
+}
+
+@Composable
+fun logOutMethod(auth: FirebaseAuth, onLogout : () -> Unit) {
+    Column(modifier = Modifier.fillMaxWidth()) {
+        Button(onClick = {
+            onLogout()
+        }) {
+            Text(
+                text = "Log Out",
+                modifier = Modifier
+                    .padding(16.dp),
+                color = Color.White
+            )
+        }
     }
 }
