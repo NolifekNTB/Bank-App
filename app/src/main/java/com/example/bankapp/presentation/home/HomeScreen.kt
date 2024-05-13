@@ -36,6 +36,7 @@ import com.example.bankapp.data.model.firebase.FriendFireStore
 import com.example.bankapp.data.model.realm.LastTransactionsRealm
 import com.example.bankapp.presentation.IntentAndStates.ViewIntent
 import com.example.bankapp.presentation.IntentAndStates.ViewState
+import com.example.bankapp.presentation.login.AuthViewModel
 import com.google.firebase.auth.FirebaseAuth
 import org.koin.androidx.compose.getViewModel
 
@@ -43,14 +44,17 @@ import org.koin.androidx.compose.getViewModel
 @Composable
 fun HomeScreen(
     auth: FirebaseAuth,
+    authViewModel: AuthViewModel = getViewModel(),
     homeViewModel: HomeViewModel = getViewModel(),
     onLogout : () -> Unit
 ) {
     val state = homeViewModel.state.collectAsState().value
+    val userId = auth.currentUser?.uid
 
-    val userId = FirebaseAuth.getInstance().currentUser?.uid!!
     LaunchedEffect(key1 = userId) {
-        homeViewModel.processIntent(ViewIntent.LoadData(userId))
+        if(userId != null){
+            homeViewModel.processIntent(ViewIntent.LoadData(userId))
+        }
     }
 
     LaunchedEffect(key1 = onLogout) {
@@ -74,7 +78,7 @@ fun HomeScreen(
                     AccountBalanceSection(state.user.balance)
                     QuickSendSection(state.allUsers)
                     LastTransactionSection(state.user.lastTransactions)
-                    logOutMethod(auth, onLogout)
+                    logOutMethod(authViewModel, onLogout)
                 } else {
                     Text(text = "Loading user data")
                 }
@@ -309,10 +313,11 @@ fun LastTransaction(title: String, amount: String, description: String) {
 }
 
 @Composable
-fun logOutMethod(auth: FirebaseAuth, onLogout : () -> Unit) {
+fun logOutMethod(authViewModel: AuthViewModel, onLogout : () -> Unit) {
     Column(modifier = Modifier.fillMaxWidth()) {
         Button(onClick = {
             onLogout()
+            authViewModel.logOut()
         }) {
             Text(
                 text = "Log Out",

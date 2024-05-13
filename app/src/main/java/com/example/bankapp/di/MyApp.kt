@@ -21,7 +21,6 @@ class MyApp: Application() {
         super.onCreate()
         initializeRealm()
         initializeKoin()
-
     }
 
     private fun initializeRealm() {

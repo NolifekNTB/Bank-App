@@ -7,20 +7,24 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
-class AuthViewModel : ViewModel() {
-    private val _currentUser = MutableStateFlow(FirebaseAuth.getInstance().currentUser)
+class AuthViewModel(private val firebaseAuth: FirebaseAuth) : ViewModel() {
+    private val _currentUser = MutableStateFlow(firebaseAuth.currentUser)
     val currentUser: StateFlow<FirebaseUser?> = _currentUser.asStateFlow()
 
-    private val authListener = FirebaseAuth.AuthStateListener { firebaseAuth ->
-        _currentUser.value = firebaseAuth.currentUser
+    private val authListener = FirebaseAuth.AuthStateListener { auth ->
+        _currentUser.value = auth.currentUser
     }
 
     init {
-        FirebaseAuth.getInstance().addAuthStateListener(authListener)
+        firebaseAuth.addAuthStateListener(authListener)
+    }
+
+    fun logOut() {
+        firebaseAuth.signOut()
     }
 
     override fun onCleared() {
         super.onCleared()
-        FirebaseAuth.getInstance().removeAuthStateListener(authListener)
+        firebaseAuth.removeAuthStateListener(authListener)
     }
 }

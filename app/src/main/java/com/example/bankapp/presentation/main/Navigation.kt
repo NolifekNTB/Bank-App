@@ -7,17 +7,17 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.bankapp.presentation.home.HomeScreen
-import com.example.bankapp.presentation.home.test
 import com.example.bankapp.presentation.login.AuthViewModel
 import com.example.bankapp.presentation.login.LoginScreen
 import com.google.firebase.auth.FirebaseAuth
+import org.koin.androidx.compose.inject
 
 
 @Composable
 fun AppNavigation(authViewModel: AuthViewModel) {
     val navController = rememberNavController()
     val user by authViewModel.currentUser.collectAsState()
-    val auth = FirebaseAuth.getInstance()
+    val auth by inject<FirebaseAuth>()
 
     NavHost(
         navController = navController,
@@ -28,7 +28,7 @@ fun AppNavigation(authViewModel: AuthViewModel) {
         }
 
         composable("main") {
-            HomeScreen(auth){
+            HomeScreen(auth, authViewModel){
                 navController.navigate("login")
             }
         }
