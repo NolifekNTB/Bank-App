@@ -1,6 +1,6 @@
 package com.example.bankapp.home.presentation.mvi
 
-import com.example.bankapp.core.data.remote.firebase.FriendFireStore
+import com.example.bankapp.core.data.remote.firebase.model.FriendFireStore
 import com.example.bankapp.core.data.local.realm.UserRealm
 
 sealed class ViewState {

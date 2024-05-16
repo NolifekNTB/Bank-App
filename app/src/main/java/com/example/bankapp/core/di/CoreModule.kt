@@ -1,6 +1,6 @@
 package com.example.bankapp.core.di
 
-import com.example.bankapp.auth.data.repository.FirebaseRepository
+import com.example.bankapp.auth.data.repository.FirebaseUserRepositoryImpl
 import com.example.bankapp.home.data.repository.LastTranscationsImpl
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -23,6 +23,6 @@ val coreModule = module {
     }
 
     single {
-        FirebaseRepository(get())
+        FirebaseUserRepositoryImpl(get())
     }
 }

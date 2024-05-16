@@ -30,7 +30,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.layout.ContentScale
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
-import com.example.bankapp.core.data.remote.firebase.FriendFireStore
+import com.example.bankapp.core.data.remote.firebase.model.FriendFireStore
 import com.example.bankapp.core.data.local.realm.LastTransactionsRealm
 import com.example.bankapp.home.presentation.mvi.ViewIntent
 import com.example.bankapp.home.presentation.mvi.ViewState

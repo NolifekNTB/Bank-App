@@ -1,24 +1,25 @@
 package com.example.bankapp.auth.data.repository
 
 import android.util.Log
-import com.example.bankapp.core.data.remote.firebase.FriendFireStore
-import com.example.bankapp.core.data.remote.firebase.LastTransactionsFireStore
-import com.example.bankapp.core.data.remote.firebase.UserFireStore
+import com.example.bankapp.core.data.remote.firebase.model.FriendFireStore
+import com.example.bankapp.core.data.remote.firebase.model.LastTransactionsFireStore
+import com.example.bankapp.core.data.remote.firebase.model.UserFireStore
+import com.example.bankapp.core.data.remote.firebase.repository.UserRepository
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
-class FirebaseRepository(private val db: FirebaseFirestore) {
+class FirebaseUserRepositoryImpl(private val db: FirebaseFirestore): UserRepository {
 
-    fun createUserProfile(user: UserFireStore, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
+    override fun createUserProfile(user: UserFireStore, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
         db.collection("users").document(user.userId).set(user)
             .addOnSuccessListener { onSuccess() }
             .addOnFailureListener { e -> onFailure(e) }
     }
 
-    suspend fun fetchUserData(userId: String): UserFireStore? = suspendCoroutine { continuation ->
+    override suspend fun fetchUserData(userId: String): UserFireStore? = suspendCoroutine { continuation ->
         db.collection("users").document(userId).get()
             .addOnSuccessListener { document ->
                 val user = document.toObject(UserFireStore::class.java)?.copy(userId = document.id)
@@ -30,7 +31,7 @@ class FirebaseRepository(private val db: FirebaseFirestore) {
             }
     }
 
-    suspend fun fetchUserProfiles(): List<FriendFireStore> {
+    override suspend fun fetchUserProfiles(): List<FriendFireStore> {
         return try {
             val snapshot = db.collection("users").get().await()
             snapshot.documents.mapNotNull { doc ->
@@ -42,7 +43,7 @@ class FirebaseRepository(private val db: FirebaseFirestore) {
         }
     }
 
-    fun addTransaction(transaction: LastTransactionsFireStore, userID: String) {
+    override fun addTransaction(transaction: LastTransactionsFireStore, userID: String) {
         db.collection("users").document(userID)
             .update(
                 "lastTransactions",

@@ -1,4 +1,4 @@
-package com.example.bankapp.main.presentation
+package com.example.bankapp.core.presentation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState

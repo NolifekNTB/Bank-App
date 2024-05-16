@@ -4,10 +4,10 @@ package com.example.bankapp.home.presentation
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.bankapp.core.data.remote.firebase.LastTransactionsFireStore
-import com.example.bankapp.core.data.remote.firebase.UserFireStore
+import com.example.bankapp.core.data.remote.firebase.model.LastTransactionsFireStore
+import com.example.bankapp.core.data.remote.firebase.model.UserFireStore
 import com.example.bankapp.core.domain.mappers.mapUserFireStoreToUserRealm
-import com.example.bankapp.auth.data.repository.FirebaseRepository
+import com.example.bankapp.auth.data.repository.FirebaseUserRepositoryImpl
 import com.example.bankapp.home.data.repository.LastTranscationsImpl
 import com.example.bankapp.home.presentation.mvi.ViewIntent
 import com.example.bankapp.home.presentation.mvi.ViewState
@@ -20,7 +20,7 @@ import kotlinx.coroutines.launch
 
 class HomeViewModel(
     val repoRealm: LastTranscationsImpl,
-    val repoFirebase: FirebaseRepository
+    val repoFirebase: FirebaseUserRepositoryImpl
 ): ViewModel() {
     private val _state = MutableStateFlow<ViewState>(ViewState.Loading)
     val state: StateFlow<ViewState> = _state.asStateFlow()

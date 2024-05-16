@@ -26,7 +26,10 @@ class MyApp: Application() {
     private fun initializeRealm() {
         realm = Realm.open(
             configuration = RealmConfiguration.create(
-                schema = setOf(UserRealm::class, LastTransactionsRealm::class)
+                schema = setOf(
+                    UserRealm::class,
+                    LastTransactionsRealm::class
+                )
             )
         )
     }

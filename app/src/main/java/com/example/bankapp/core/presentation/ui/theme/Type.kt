@@ -1,4 +1,4 @@
-package com.example.bankapp.core.presentation.theme
+package com.example.bankapp.core.presentation.ui.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle

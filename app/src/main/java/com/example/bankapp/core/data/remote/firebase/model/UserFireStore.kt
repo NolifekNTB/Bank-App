@@ -1,4 +1,4 @@
-package com.example.bankapp.core.data.remote.firebase
+package com.example.bankapp.core.data.remote.firebase.model
 
 import com.google.firebase.firestore.PropertyName
 

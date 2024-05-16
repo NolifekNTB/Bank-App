@@ -1,4 +1,4 @@
-package com.example.bankapp.core.presentation.theme
+package com.example.bankapp.core.presentation.ui.theme
 
 import android.app.Activity
 import android.os.Build

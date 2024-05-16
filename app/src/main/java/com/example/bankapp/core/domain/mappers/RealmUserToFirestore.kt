@@ -1,7 +1,7 @@
 package com.example.bankapp.core.domain.mappers
 
-import com.example.bankapp.core.data.remote.firebase.LastTransactionsFireStore
-import com.example.bankapp.core.data.remote.firebase.UserFireStore
+import com.example.bankapp.core.data.remote.firebase.model.LastTransactionsFireStore
+import com.example.bankapp.core.data.remote.firebase.model.UserFireStore
 import com.example.bankapp.core.data.local.realm.UserRealm
 
 fun mapUserRealmToUserFireStore(userRealm: UserRealm): UserFireStore {
