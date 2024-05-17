@@ -29,7 +29,11 @@ fun AppNavigation(authViewModel: AuthViewModel) {
 
         composable("main") {
             HomeScreen(auth, authViewModel){
-                navController.navigate("login")
+                navController.navigate("login") {
+                    popUpTo(navController.graph.startDestinationId) {
+                        inclusive = true
+                    }
+                }
             }
         }
     }
