@@ -1,7 +1,7 @@
 package com.example.bankapp.core.di
 
 import com.example.bankapp.auth.data.repository.FirebaseUserRepositoryImpl
-import com.example.bankapp.home.data.repository.LastTranscationsImpl
+import com.example.bankapp.home.data.repository.LastTransactionsImpl
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.firestoreSettings
@@ -19,7 +19,7 @@ val coreModule = module {
     single { FirebaseAuth.getInstance() }
 
     single {
-        LastTranscationsImpl()
+        LastTransactionsImpl()
     }
 
     single {

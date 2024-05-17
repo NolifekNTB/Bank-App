@@ -2,7 +2,7 @@ package com.example.bankapp.core.domain.mappers
 
 import com.example.bankapp.core.data.remote.firebase.model.LastTransactionsFireStore
 import com.example.bankapp.core.data.remote.firebase.model.UserFireStore
-import com.example.bankapp.core.data.local.realm.UserRealm
+import com.example.bankapp.core.data.local.realm.model.UserRealm
 
 fun mapUserRealmToUserFireStore(userRealm: UserRealm): UserFireStore {
     val userFirestore = UserFireStore(

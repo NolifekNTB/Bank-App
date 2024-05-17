@@ -2,8 +2,9 @@ package com.example.bankapp.core.di
 
 import android.app.Application
 import com.example.bankapp.auth.di.authModule
-import com.example.bankapp.core.data.local.realm.LastTransactionsRealm
-import com.example.bankapp.core.data.local.realm.UserRealm
+import com.example.bankapp.core.data.local.realm.model.FriendRealm
+import com.example.bankapp.core.data.local.realm.model.LastTransactionsRealm
+import com.example.bankapp.core.data.local.realm.model.UserRealm
 import com.example.bankapp.home.di.homeModule
 import io.realm.kotlin.Realm
 import io.realm.kotlin.RealmConfiguration
@@ -28,7 +29,8 @@ class MyApp: Application() {
             configuration = RealmConfiguration.create(
                 schema = setOf(
                     UserRealm::class,
-                    LastTransactionsRealm::class
+                    LastTransactionsRealm::class,
+                    FriendRealm::class
                 )
             )
         )

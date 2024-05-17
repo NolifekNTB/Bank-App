@@ -31,10 +31,11 @@ import androidx.compose.ui.layout.ContentScale
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.example.bankapp.core.data.remote.firebase.model.FriendFireStore
-import com.example.bankapp.core.data.local.realm.LastTransactionsRealm
+import com.example.bankapp.core.data.local.realm.model.LastTransactionsRealm
 import com.example.bankapp.home.presentation.mvi.ViewIntent
 import com.example.bankapp.home.presentation.mvi.ViewState
 import com.example.bankapp.auth.presentation.AuthViewModel
+import com.example.bankapp.core.data.local.realm.model.FriendRealm
 import com.google.firebase.auth.FirebaseAuth
 import org.koin.androidx.compose.getViewModel
 
@@ -178,7 +179,7 @@ fun ActionButton(text: String, color: Color) {
 }
 
 @Composable
-fun QuickSendSection(allUsers: List<FriendFireStore>) {
+fun QuickSendSection(allUsers: List<FriendRealm>) {
     Column(
         modifier = Modifier.fillMaxWidth()
     ) {
@@ -213,7 +214,7 @@ fun SectionHeader(title: String, actionText: String) {
 }
 
 @Composable
-fun QuickSendContacts(allUsers: List<FriendFireStore>) {
+fun QuickSendContacts(allUsers: List<FriendRealm>) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceEvenly

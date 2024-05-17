@@ -8,7 +8,8 @@ import com.example.bankapp.core.data.remote.firebase.model.LastTransactionsFireS
 import com.example.bankapp.core.data.remote.firebase.model.UserFireStore
 import com.example.bankapp.core.domain.mappers.mapUserFireStoreToUserRealm
 import com.example.bankapp.auth.data.repository.FirebaseUserRepositoryImpl
-import com.example.bankapp.home.data.repository.LastTranscationsImpl
+import com.example.bankapp.core.domain.mappers.mapFriendsFireStoreToFriendsRealm
+import com.example.bankapp.home.data.repository.LastTransactionsImpl
 import com.example.bankapp.home.presentation.mvi.ViewIntent
 import com.example.bankapp.home.presentation.mvi.ViewState
 import com.google.firebase.auth.FirebaseAuth
@@ -19,13 +20,13 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class HomeViewModel(
-    val repoRealm: LastTranscationsImpl,
+    val repoRealm: LastTransactionsImpl,
     val repoFirebase: FirebaseUserRepositoryImpl
 ): ViewModel() {
     private val _state = MutableStateFlow<ViewState>(ViewState.Loading)
     val state: StateFlow<ViewState> = _state.asStateFlow()
 
-    fun processIntent(intent: ViewIntent) {
+    suspend fun processIntent(intent: ViewIntent) {
         when (intent) {
             is ViewIntent.LoadData -> loadData(intent.userID)
             is ViewIntent.addTransaction -> addNewTransaction(intent.transaction)
@@ -41,25 +42,28 @@ class HomeViewModel(
 
     private fun loadData(userId: String) {
         viewModelScope.launch {
-
             val cachedUserData = repoRealm.getLoggedUser(userId)
+            val cachedFriends = repoRealm.getAllUsers()
+
 
             if (cachedUserData != null && cachedUserData.userId.isNotEmpty()) {
-                _state.value = ViewState.DataLoaded(cachedUserData, emptyList()) //TODO: allUsers
+                _state.value = ViewState.DataLoaded(cachedUserData, cachedFriends) //TODO: allUsers
             }
 
             try {
-                val userDeferred = async { repoFirebase.fetchUserData(userId) }
-                val allUsers = async { repoFirebase.fetchUserProfiles() }
+                val userDeferred = async { repoFirebase.fetchUser(userId) }
+                val allUsers = async { repoFirebase.fetchProfiles() }
 
                 val user = userDeferred.await()
                 val users = allUsers.await()
 
                 if (user != null) {
+                    repoRealm.deleteAllTransactions()
                     repoRealm.replaceTransactions(user)
+                    repoRealm.replaceFriends(users)
                     _state.value = ViewState.DataLoaded(
                         mapUserFireStoreToUserRealm(user),
-                        users
+                        mapFriendsFireStoreToFriendsRealm(users)
                     )
                 }
 
@@ -71,8 +75,11 @@ class HomeViewModel(
     }
 
 
-    fun createUserProfile(
-        name: String, email: String, phone: String, profilePicUrl: String
+    suspend fun createUserProfile(
+        name: String,
+        email: String,
+        phone: String,
+        profilePicUrl: String
     ) {
         val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
         val transactions = listOf(
@@ -91,7 +98,7 @@ class HomeViewModel(
         )
     }
 
-    fun addNewTransaction(transaction: LastTransactionsFireStore) {
+    suspend fun addNewTransaction(transaction: LastTransactionsFireStore) {
         val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
         repoFirebase.addTransaction(transaction, userId)
     }

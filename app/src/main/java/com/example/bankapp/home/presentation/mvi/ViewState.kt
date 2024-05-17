@@ -1,13 +1,14 @@
 package com.example.bankapp.home.presentation.mvi
 
+import com.example.bankapp.core.data.local.realm.model.FriendRealm
 import com.example.bankapp.core.data.remote.firebase.model.FriendFireStore
-import com.example.bankapp.core.data.local.realm.UserRealm
+import com.example.bankapp.core.data.local.realm.model.UserRealm
 
 sealed class ViewState {
     data object Loading : ViewState()
     data class DataLoaded(
         val user: UserRealm? = null,
-        val allUsers: List<FriendFireStore> = emptyList()
+        val allUsers: List<FriendRealm> = emptyList()
     ) : ViewState()
     data class Error(val exception: Throwable) : ViewState()
 }

@@ -1,4 +1,4 @@
-package com.example.bankapp.core.data.local.realm
+package com.example.bankapp.core.data.local.realm.model
 
 import io.realm.kotlin.types.RealmObject
 

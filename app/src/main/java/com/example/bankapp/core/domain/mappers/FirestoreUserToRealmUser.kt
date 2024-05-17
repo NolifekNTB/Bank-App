@@ -1,33 +1,10 @@
 package com.example.bankapp.core.domain.mappers
 
 import com.example.bankapp.core.data.remote.firebase.model.UserFireStore
-import com.example.bankapp.core.data.local.realm.LastTransactionsRealm
-import com.example.bankapp.core.data.local.realm.UserRealm
+import com.example.bankapp.core.data.local.realm.model.LastTransactionsRealm
+import com.example.bankapp.core.data.local.realm.model.UserRealm
 import io.realm.kotlin.ext.realmListOf
 
-/*fun mapUserFireStoreToUserRealm(userFireStore: UserFireStore): UserRealm {
-    val userRealm = UserRealm().apply {
-        userId = userFireStore.userId
-        name = userFireStore.name
-        email = userFireStore.email
-        phone = userFireStore.phone
-        profilePicUrl = userFireStore.profilePicUrl
-        balance = userFireStore.balance
-
-        lastTransactions = userFireStore.lastTransactions.map {
-            LastTransactionsRealm().apply {
-                name = it.name
-                price = it.price
-                timeOrPhoneNumber = it.timeOrPhoneNumber
-                iconLogo = it.iconLogo
-            }
-        } as RealmList<LastTransactionsRealm>
-    }
-
-    return userRealm
-}
-
- */
 
 fun mapUserFireStoreToUserRealm(userFireStore: UserFireStore): UserRealm {
     val userRealm = UserRealm().apply {
