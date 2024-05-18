@@ -74,30 +74,6 @@ class HomeViewModel(
         }
     }
 
-
-    suspend fun createUserProfile(
-        name: String,
-        email: String,
-        phone: String,
-        profilePicUrl: String
-    ) {
-        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
-        val transactions = listOf(
-            LastTransactionsFireStore(
-                name = "Anna Nowak",
-                price = 100.0,
-                timeOrPhoneNumber = "123456789",
-                iconLogo = "https://example.com/anna.png"
-            )
-        )
-        val user = UserFireStore(userId, name, email, phone, profilePicUrl, 0.0, transactions)
-
-        repoFirebase.createUserProfile(user,
-            onSuccess = { Log.d("testowanie", "User profile created successfully.") },
-            onFailure = { e -> Log.d("testowanie", "Error creating user profile", e) }
-        )
-    }
-
     suspend fun addNewTransaction(transaction: LastTransactionsFireStore) {
         val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
         repoFirebase.addTransaction(transaction, userId)

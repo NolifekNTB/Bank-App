@@ -9,26 +9,29 @@ import androidx.navigation.compose.rememberNavController
 import com.example.bankapp.home.presentation.HomeScreen
 import com.example.bankapp.auth.presentation.AuthViewModel
 import com.example.bankapp.auth.presentation.LoginScreen
+import com.example.bankapp.auth.presentation.mvi.AuthViewState
 import com.google.firebase.auth.FirebaseAuth
+import org.koin.androidx.compose.getViewModel
 import org.koin.androidx.compose.inject
 
 
 @Composable
-fun AppNavigation(authViewModel: AuthViewModel) {
+fun AppNavigation() {
+    val authViewModel: AuthViewModel = getViewModel()
     val navController = rememberNavController()
-    val user by authViewModel.currentUser.collectAsState()
+    val viewState by authViewModel.viewState.collectAsState()
     val auth by inject<FirebaseAuth>()
 
     NavHost(
         navController = navController,
-        startDestination = if (user != null) "main" else "login"
+        startDestination = if (viewState is AuthViewState.Success) "main" else "login"
     ) {
         composable("login") {
-            LoginScreen(auth, navController)
+            LoginScreen(navController, authViewModel)
         }
 
         composable("main") {
-            HomeScreen(auth, authViewModel){
+            HomeScreen(auth){
                 navController.navigate("login") {
                     popUpTo(navController.graph.startDestinationId) {
                         inclusive = true

@@ -43,7 +43,6 @@ import org.koin.androidx.compose.getViewModel
 @Composable
 fun HomeScreen(
     auth: FirebaseAuth,
-    authViewModel: AuthViewModel = getViewModel(),
     homeViewModel: HomeViewModel = getViewModel(),
     onLogout : () -> Unit
 ) {
@@ -77,7 +76,6 @@ fun HomeScreen(
                     AccountBalanceSection(state.user.balance)
                     QuickSendSection(state.allUsers)
                     LastTransactionSection(state.user.lastTransactions)
-                    logOutMethod(authViewModel, onLogout)
                 } else {
                     Text(text = "Loading user data")
                 }
@@ -308,22 +306,5 @@ fun LastTransaction(title: String, amount: String, description: String) {
             fontSize = 16.sp,
             color = Color.White
         )
-    }
-}
-
-@Composable
-fun logOutMethod(authViewModel: AuthViewModel, onLogout : () -> Unit) {
-    Column(modifier = Modifier.fillMaxWidth()) {
-        Button(onClick = {
-            onLogout()
-            authViewModel.logOut()
-        }) {
-            Text(
-                text = "Log Out",
-                modifier = Modifier
-                    .padding(16.dp),
-                color = Color.White
-            )
-        }
     }
 }

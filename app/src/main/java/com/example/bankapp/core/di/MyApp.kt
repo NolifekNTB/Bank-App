@@ -45,5 +45,4 @@ class MyApp: Application() {
             modules(homeModule)
         }
     }
-
 }
