@@ -23,10 +23,23 @@ class AuthViewModel(
     private val _viewState = MutableStateFlow<AuthViewState>(AuthViewState.Idle)
     val viewState: StateFlow<AuthViewState> = _viewState.asStateFlow()
 
+    init {
+        checkCurrentUser()
+    }
+
     fun handleIntent(intent: AuthIntent) {
         when (intent) {
             is AuthIntent.Login -> loginUser(intent.email, intent.password)
             is AuthIntent.Register -> registerUser(intent.email, intent.password)
+        }
+    }
+
+    private fun checkCurrentUser() {
+        val currentUser = FirebaseAuth.getInstance().currentUser
+        _viewState.value = if (currentUser != null) {
+            AuthViewState.Success("User already logged in")
+        } else {
+            AuthViewState.Idle
         }
     }
 
