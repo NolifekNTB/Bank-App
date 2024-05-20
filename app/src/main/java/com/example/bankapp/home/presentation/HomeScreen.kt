@@ -55,11 +55,11 @@ fun HomeScreen(
         }
     }
 
-    LaunchedEffect(key1 = onLogout) {
-        Log.d("testowanie", "testing works")
-    }
+    HomeContent(state)
+}
 
-
+@Composable
+fun HomeContent(state: ViewState) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -70,19 +70,27 @@ fun HomeScreen(
     ) {
         when (state) {
             is ViewState.Loading -> CircularProgressIndicator()
-            is ViewState.DataLoaded -> {
-                if(state.user != null){
-                    GreetingHeader(state.user.name)
-                    AccountBalanceSection(state.user.balance)
-                    QuickSendSection(state.allUsers)
-                    LastTransactionSection(state.user.lastTransactions)
-                } else {
-                    Text(text = "Loading user data")
-                }
-            }
-            is ViewState.Error -> Text("Error: ${state.exception.message}")
+            is ViewState.DataLoaded -> DataLoadedContent(state)
+            is ViewState.Error -> ErrorContent(state.exception)
         }
     }
+}
+
+@Composable
+fun DataLoadedContent(state: ViewState.DataLoaded) {
+    if (state.user != null) {
+        GreetingHeader(state.user.name)
+        AccountBalanceSection(state.user.balance)
+        QuickSendSection(state.allUsers)
+        LastTransactionSection(state.user.lastTransactions)
+    } else {
+        Text(text = "Loading user data")
+    }
+}
+
+@Composable
+fun ErrorContent(exception: Throwable) {
+    Text(text = "Error: ${exception.message}")
 }
 
 @Composable

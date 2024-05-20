@@ -77,15 +77,4 @@ class AuthViewModel(
             }
         }
     }
-
-    /*fun logOut() {
-        firebaseAuth.signOut()
-    }
-
-    override fun onCleared() {
-        super.onCleared()
-        firebaseAuth.removeAuthStateListener(authListener)
-    }
-
-     */
 }

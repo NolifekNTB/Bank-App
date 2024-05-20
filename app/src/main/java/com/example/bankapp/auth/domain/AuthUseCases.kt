@@ -10,6 +10,24 @@ class AuthUseCases(
     private val firebaseAuth: FirebaseAuth,
     private val repoFirebase: FirebaseUserRepositoryImpl
 ) {
+    suspend fun loginUser(email: String, password: String): Result<String> {
+        return try {
+            firebaseAuth.signInWithEmailAndPassword(email, password).await()
+            Result.success("User logged in successfully.")
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    suspend fun registerUser(email: String, password: String): Result<String> {
+        return try {
+            firebaseAuth.createUserWithEmailAndPassword(email, password).await()
+            Result.success("User registered successfully.")
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
     suspend fun createUserProfile(): Result<String> {
         val userId = firebaseAuth.currentUser?.uid ?: return Result.failure(Exception("User not logged in"))
         val user = UserFireStore(
@@ -32,24 +50,6 @@ class AuthUseCases(
         return try {
             repoFirebase.createUserProfile(user, {}, {})
             Result.success("User profile created successfully.")
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
-    }
-
-    suspend fun loginUser(email: String, password: String): Result<String> {
-        return try {
-            firebaseAuth.signInWithEmailAndPassword(email, password).await()
-            Result.success("User logged in successfully.")
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
-    }
-
-    suspend fun registerUser(email: String, password: String): Result<String> {
-        return try {
-            firebaseAuth.createUserWithEmailAndPassword(email, password).await()
-            Result.success("User registered successfully.")
         } catch (e: Exception) {
             Result.failure(e)
         }
