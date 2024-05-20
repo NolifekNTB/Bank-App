@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">Bank App</string>
+    <string name="home">Home</string>
+    <string name="history">History</string>
+    <string name="pay">Pay</string>
+    <string name="card">Card</string>
+    <string name="profile">Profile</string>
+
 </resources>

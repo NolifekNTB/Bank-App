@@ -53,6 +53,9 @@ android {
 }
 
 dependencies {
+    implementation ("com.google.android.material:material:1.12.0")
+    implementation ("androidx.compose.material3:material3:1.2.1")
+
     //Koin
     implementation (libs.koin.android)
     implementation (libs.insert.koin.koin.androidx.compose)

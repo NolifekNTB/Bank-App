@@ -44,7 +44,6 @@ import org.koin.androidx.compose.getViewModel
 fun HomeScreen(
     auth: FirebaseAuth,
     homeViewModel: HomeViewModel = getViewModel(),
-    onLogout : () -> Unit
 ) {
     val state = homeViewModel.state.collectAsState().value
     val userId = auth.currentUser?.uid
