@@ -42,6 +42,7 @@ import org.koin.androidx.compose.getViewModel
 fun HomeScreen(
     auth: FirebaseAuth,
     homeViewModel: HomeViewModel = getViewModel(),
+    onNavigation: (String) -> Unit
 ) {
     val state = homeViewModel.state.collectAsState().value
     val userId = auth.currentUser?.uid
@@ -52,11 +53,11 @@ fun HomeScreen(
         }
     }
 
-    HomeContent(state)
+    HomeContent(state){route -> onNavigation(route) }
 }
 
 @Composable
-fun HomeContent(state: ViewState) {
+fun HomeContent(state: ViewState, onNavigation: (String) -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -67,17 +68,17 @@ fun HomeContent(state: ViewState) {
     ) {
         when (state) {
             is ViewState.Loading -> CircularProgressIndicator()
-            is ViewState.DataLoaded -> DataLoadedContent(state)
+            is ViewState.DataLoaded -> DataLoadedContent(state){route -> onNavigation(route)}
             is ViewState.Error -> ErrorContent(state.exception)
         }
     }
 }
 
 @Composable
-fun DataLoadedContent(state: ViewState.DataLoaded) {
+fun DataLoadedContent(state: ViewState.DataLoaded, onNavigation: (String) -> Unit) {
     if (state.user != null) {
         GreetingHeader(state.user.name)
-        AccountBalanceSection(state.user.balance)
+        AccountBalanceSection(state.user.balance){route -> onNavigation(route)}
         QuickSendSection(state.allUsers)
         LastTransactionSection(state.user.lastTransactions)
     } else {
@@ -127,7 +128,7 @@ fun NotificationIcon() {
 }
 
 @Composable
-fun AccountBalanceSection(balance: Double) {
+fun AccountBalanceSection(balance: Double, onNavigation: (String) -> Unit) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         elevation = CardDefaults.elevatedCardElevation(8.dp)
@@ -144,7 +145,7 @@ fun AccountBalanceSection(balance: Double) {
             )
             Spacer(modifier = Modifier.height(8.dp))
             AccountBalanceValue(balance)
-            ActionButtons()
+            ActionButtons(){route -> onNavigation(route)}
         }
     }
 }
@@ -160,21 +161,21 @@ fun AccountBalanceValue(balance: Double) {
 }
 
 @Composable
-fun ActionButtons() {
+fun ActionButtons(onNavigation: (String) -> Unit) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceEvenly
     ) {
-        ActionButton(text = "Top Up", color = Color(0xFF77DD77))
-        ActionButton(text = "Transfer", color = Color(0xFFFFD700))
-        ActionButton(text = "Withdraw", color = Color(0xFFFFA07A))
+        ActionButton(text = "Top Up", color = Color(0xFF77DD77)){route -> onNavigation(route)}
+        ActionButton(text = "Transfer", color = Color(0xFFFFD700)){route -> onNavigation(route)}
+        ActionButton(text = "Withdraw", color = Color(0xFFFFA07A)){route -> onNavigation(route)}
     }
 }
 
 @Composable
-fun ActionButton(text: String, color: Color) {
+fun ActionButton(text: String, color: Color, onNavigation: (String) -> Unit) {
     Button(
-        onClick = { /* Action */ },
+        onClick = { onNavigation(text) },
         colors = ButtonDefaults.buttonColors(containerColor = color)
     ) {
         Text(text = text)

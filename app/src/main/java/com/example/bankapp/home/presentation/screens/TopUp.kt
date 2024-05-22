@@ -21,13 +21,13 @@ import com.example.bankapp.R
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
-fun TopUpScreen() {
+fun TopUpScreen(onNavigate: (String) -> Unit) {
     Scaffold(
         topBar = {
             TopAppBar(
                 title = { Text("Top Up") },
                 navigationIcon = {
-                    IconButton(onClick = { /* Handle back */ }) {
+                    IconButton(onClick = { onNavigate("back") }) {
                         Icon(
                             imageVector = Icons.Default.ArrowBack,
                             contentDescription = "Back"
@@ -58,17 +58,17 @@ fun TopUpScreen() {
             )
 
             PaymentOptionSection(title = "E-Payment") {
-                PaymentOption(icon = R.drawable.ic_paypal, text = "PayPal")
-                PaymentOption(icon = R.drawable.ic_google_pay, text = "Google Pay")
-                PaymentOption(icon = R.drawable.ic_trustly, text = "Trustly")
-                PaymentOption(icon = R.drawable.ic_other_payment, text = "Other E-Payment")
+                PaymentOption(icon = R.drawable.ic_paypal, text = "PayPal") {route -> onNavigate(route)}
+                PaymentOption(icon = R.drawable.ic_google_pay, text = "Google Pay") {route -> onNavigate(route)}
+                PaymentOption(icon = R.drawable.ic_trustly, text = "Trustly") {route -> onNavigate(route)}
+                PaymentOption(icon = R.drawable.ic_other_payment, text = "Other E-Payment") {route -> onNavigate(route)}
             }
 
             Spacer(modifier = Modifier.height(16.dp))
 
             PaymentOptionSection(title = "Credit Card") {
-                PaymentOption(icon = R.drawable.ic_mastercard, text = "MasterCard")
-                PaymentOption(icon = R.drawable.ic_unionpay, text = "Union Pay")
+                PaymentOption(icon = R.drawable.ic_mastercard, text = "MasterCard"){route -> onNavigate(route)}
+                PaymentOption(icon = R.drawable.ic_unionpay, text = "Union Pay") {route -> onNavigate(route)}
             }
         }
     }
@@ -88,13 +88,13 @@ fun PaymentOptionSection(title: String, content: @Composable ColumnScope.() -> U
 }
 
 @Composable
-fun PaymentOption(icon: Int, text: String) {
+fun PaymentOption(icon: Int, text: String, onNavigate: (String) -> Unit) {
     Card(
         shape = RoundedCornerShape(8.dp),
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 4.dp)
-            .clickable { /* Handle click */ },
+            .clickable { onNavigate("topUp2") },
         elevation = 4.dp
     ) {
         Row(

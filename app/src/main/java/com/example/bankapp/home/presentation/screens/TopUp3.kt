@@ -30,13 +30,13 @@ import com.example.bankapp.R
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
-fun ThirdTopUpScreen() {
+fun ThirdTopUpScreen(onNavigate: (String) -> Unit) {
     Scaffold(
         topBar = {
             TopAppBar(
                 title = { Text("Top Up") },
                 navigationIcon = {
-                    IconButton(onClick = { /* Handle back */ }) {
+                    IconButton(onClick = { onNavigate("back") }) {
                         Icon(
                             imageVector = Icons.Default.ArrowBack,
                             contentDescription = "Back"
@@ -56,7 +56,7 @@ fun ThirdTopUpScreen() {
             Spacer(modifier = Modifier.height(16.dp))
             ConfirmationSection()
             Spacer(modifier = Modifier.weight(1f))
-            ContinueButton()
+            ContinueButton(){route -> onNavigate(route)}
             Spacer(modifier = Modifier.height(16.dp))
             ChangeAmountButton()
         }
@@ -148,9 +148,9 @@ fun DetailRow(label: String, value: String) {
 }
 
 @Composable
-fun ContinueButton() {
+fun ContinueButton(onNavigate: (String) -> Unit) {
     Button(
-        onClick = { /* Handle continue */ },
+        onClick = { onNavigate("topUp4") },
         modifier = Modifier
             .fillMaxWidth()
             .height(56.dp),

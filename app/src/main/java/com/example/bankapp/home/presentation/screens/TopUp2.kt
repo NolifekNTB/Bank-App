@@ -28,13 +28,13 @@ import com.example.bankapp.R
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
-fun SecondTopUpScreen() {
+fun SecondTopUpScreen(onNavigate: (String) -> Unit) {
     Scaffold(
         topBar = {
             TopAppBar(
                 title = { Text("Top Up") },
                 navigationIcon = {
-                    IconButton(onClick = { /* Handle back */ }) {
+                    IconButton(onClick = { onNavigate("back") }) {
                         Icon(
                             imageVector = Icons.Default.ArrowBack,
                             contentDescription = "Back"
@@ -57,7 +57,7 @@ fun SecondTopUpScreen() {
             Spacer(modifier = Modifier.height(16.dp))
             PaymentMethodSection()
             Spacer(modifier = Modifier.weight(1f))
-            ContinueButton()
+            ContinueButton(){route -> onNavigate("topUp3") }
         }
     }
 }
@@ -187,9 +187,9 @@ fun PaymentMethodSection() {
 }
 
 @Composable
-fun ContinueButton() {
+fun ContinueButton(onNavigate: (String) -> Unit) {
     Button(
-        onClick = { /* Handle continue */ },
+        onClick = { onNavigate("topUp3") },
         modifier = Modifier
             .fillMaxWidth()
             .height(56.dp),
