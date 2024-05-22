@@ -1,5 +1,7 @@
 package com.example.bankapp.core.presentation
 
+import SecondTopUpScreen
+import TopUpScreen
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -29,6 +31,8 @@ import com.example.bankapp.auth.presentation.AuthViewModel
 import com.example.bankapp.auth.presentation.LoginScreen
 import com.example.bankapp.auth.presentation.mvi.AuthViewState
 import com.example.bankapp.home.presentation.HomeScreen
+import com.example.bankapp.home.presentation.screens.ThirdTopUpScreen
+import com.example.bankapp.home.presentation.screens.TopUpSuccessScreen
 import com.google.firebase.auth.FirebaseAuth
 import org.koin.androidx.compose.getViewModel
 import org.koin.androidx.compose.inject
@@ -66,7 +70,7 @@ fun NavigationHost(
         modifier = Modifier.padding(innerPadding)
     ) {
         composable("login") { LoginScreen(navController, authViewModel) }
-        composable("home") { HomeScreen(auth) }
+        composable("home") { TopUpSuccessScreen() } //TODO topUp -> Home
         composable("history") { HistoryScreen() }
         composable("pay") { PayScreen() }
         composable("card") { CardScreen() }
