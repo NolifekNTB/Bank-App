@@ -19,14 +19,16 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.foundation.Image
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.zIndex
 import com.example.bankapp.R
 
 
 @Composable
-fun TopUpSuccessScreen() {
+fun TopUpSuccessScreen(selectedMethod: String, chosenAmount: Float, onNavigate: (String) -> Unit) {
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -37,6 +39,20 @@ fun TopUpSuccessScreen() {
             )
             .padding(16.dp)
     ) {
+        IconButton(
+            onClick = { onNavigate("back") },
+            modifier = Modifier
+                .align(Alignment.TopStart)
+                .padding(20.dp)
+                .zIndex(1f)
+        ){
+            Icon(
+                imageVector = Icons.Default.Close,
+                contentDescription = "Close Icon",
+                tint = Color.Black,
+                modifier = Modifier.size(32.dp)
+            )
+        }
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
@@ -79,21 +95,21 @@ fun TopUpSuccessScreen() {
             Spacer(modifier = Modifier.height(16.dp))
             Divider(color = Color.Gray, thickness = 1.dp)
             Spacer(modifier = Modifier.height(16.dp))
-            TopUpSummary()
+            TopUpSummary(chosenAmount)
             Spacer(modifier = Modifier.height(16.dp))
             Divider(color = Color.Gray, thickness = 1.dp)
             Spacer(modifier = Modifier.height(16.dp))
-            PaymentMethod()
+            PaymentMethod(selectedMethod)
         }
     }
 }
 
 @Composable
-fun TopUpSummary() {
+fun TopUpSummary(chosenAmount: Float) {
     Column {
-        SummaryRow(label = "Amount", value = "$50.00")
+        SummaryRow(label = "Amount", value = "$$chosenAmount")
         SummaryRow(label = "Admin Fee", value = "$1.00")
-        SummaryRow(label = "Total", value = "$51.00", fontWeight = FontWeight.Bold)
+        SummaryRow(label = "Total", value = "$${chosenAmount+1.00f}", fontWeight = FontWeight.Bold)
     }
 }
 
@@ -109,7 +125,17 @@ fun SummaryRow(label: String, value: String, fontWeight: FontWeight = FontWeight
 }
 
 @Composable
-fun PaymentMethod() {
+fun PaymentMethod(selectedMethod: String) {
+    val image = when(selectedMethod){
+        "Paypal" -> R.drawable.ic_paypal
+        "Google Pay" -> R.drawable.ic_google_pay
+        "Trustly" -> R.drawable.ic_trustly
+        "Other E-Payment" -> R.drawable.ic_other_payment
+        "Mastercard" -> R.drawable.ic_mastercard
+        "Union Pay" -> R.drawable.ic_unionpay
+        else -> R.drawable.ic_google_pay
+    }
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -117,14 +143,14 @@ fun PaymentMethod() {
             .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Icon(
-            painter = painterResource(id = R.drawable.ic_mastercard),
+        Image(
+            painter = painterResource(id = image),
             contentDescription = "Card Icon",
             modifier = Modifier.size(48.dp)
         )
         Spacer(modifier = Modifier.width(16.dp))
         Column {
-            Text(text = "MasterCard", fontSize = 16.sp, fontWeight = FontWeight.Bold)
+            Text(text = selectedMethod, fontSize = 16.sp, fontWeight = FontWeight.Bold)
             Text(text = "1803 1887 0623", fontSize = 14.sp, color = Color.Gray)
         }
     }

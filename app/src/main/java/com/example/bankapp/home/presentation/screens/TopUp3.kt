@@ -30,7 +30,7 @@ import com.example.bankapp.R
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
-fun ThirdTopUpScreen(onNavigate: (String) -> Unit) {
+fun ThirdTopUpScreen(selectedMethod: String, chosenAmount: Float, onNavigate: (String) -> Unit) {
     Scaffold(
         topBar = {
             TopAppBar(
@@ -54,7 +54,7 @@ fun ThirdTopUpScreen(onNavigate: (String) -> Unit) {
                 .padding(16.dp)
         ) {
             Spacer(modifier = Modifier.height(16.dp))
-            ConfirmationSection()
+            ConfirmationSection(selectedMethod, chosenAmount)
             Spacer(modifier = Modifier.weight(1f))
             ContinueButton(){route -> onNavigate(route)}
             Spacer(modifier = Modifier.height(16.dp))
@@ -64,7 +64,17 @@ fun ThirdTopUpScreen(onNavigate: (String) -> Unit) {
 }
 
 @Composable
-fun ConfirmationSection() {
+fun ConfirmationSection(selectedMethod: String, chosenAmount: Float) {
+    val image = when(selectedMethod){
+        "Paypal" -> R.drawable.ic_paypal
+        "Google Pay" -> R.drawable.ic_google_pay
+        "Trustly" -> R.drawable.ic_trustly
+        "Other E-Payment" -> R.drawable.ic_other_payment
+        "Mastercard" -> R.drawable.ic_mastercard
+        "Union Pay" -> R.drawable.ic_unionpay
+        else -> R.drawable.ic_google_pay
+    }
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -91,16 +101,16 @@ fun ConfirmationSection() {
             )
         }
         Text(
-            text = "$50.00",
+            text = "$$chosenAmount",
             fontSize = 32.sp,
             fontWeight = FontWeight.Bold,
             modifier = Modifier.padding(bottom = 16.dp)
         )
         Divider()
         Spacer(modifier = Modifier.height(16.dp))
-        DetailRow(label = "Account", value = "$50.00")
-        DetailRow(label = "Admin Fee", value = "$1.00")
-        DetailRow(label = "Total", value = "$51.00")
+        DetailRow(label = "Account", value = chosenAmount)
+        DetailRow(label = "Admin Fee", value = 1.00f)
+        DetailRow(label = "Total", value = chosenAmount+1.00f)
         Spacer(modifier = Modifier.height(16.dp))
         Text(
             text = "Top Up Method",
@@ -121,13 +131,13 @@ fun ConfirmationSection() {
                 modifier = Modifier.padding(16.dp)
             ) {
                 Image(
-                    painter = painterResource(id = R.drawable.ic_mastercard),
+                    painter = painterResource(id = image),
                     contentDescription = "MasterCard",
                     modifier = Modifier.size(24.dp)
                 )
                 Spacer(modifier = Modifier.width(16.dp))
                 Text(
-                    text = "MasterCard\n1803 1887 0623",
+                    text = "$selectedMethod\n1803 1887 0623",
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Medium
                 )
@@ -137,13 +147,13 @@ fun ConfirmationSection() {
 }
 
 @Composable
-fun DetailRow(label: String, value: String) {
+fun DetailRow(label: String, value: Float) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Text(text = label, fontSize = 16.sp, color = Color.Gray)
-        Text(text = value, fontSize = 16.sp, fontWeight = FontWeight.Bold)
+        Text(text = "$$value", fontSize = 16.sp, fontWeight = FontWeight.Bold)
     }
 }
 

@@ -4,7 +4,9 @@ import SecondTopUpScreen
 import TopUpScreen
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 import androidx.navigation.navigation
 import com.example.bankapp.home.presentation.HomeScreen
 import com.example.bankapp.home.presentation.screens.ThirdTopUpScreen
@@ -26,35 +28,55 @@ fun NavGraphBuilder.homeNavGraph(auth: FirebaseAuth, navController: NavHostContr
         }
 
         composable(route = "Top Up") {
-            TopUpScreen(){ route ->
-                if(route == "topUp2"){
-                    navController.navigate("topUp2")
-                } else {
-                    navController.popBackStack()
-                }
+            TopUpScreen(){ selectedMethod ->
+                if(selectedMethod == "back") navController.popBackStack()
+                else navController.navigate("topUp2/$selectedMethod")
             }
         }
 
-        composable(route = "topUp2") {
-            SecondTopUpScreen(){ route ->
-                if(route == "topUp3"){
-                    navController.navigate("topUp3")
-                } else {
-                    navController.popBackStack()
+        composable(
+            route = "topUp2/{selectedMethod}",
+            arguments = listOf(navArgument("selectedMethod") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val selectedMethod = backStackEntry.arguments?.getString("selectedMethod") ?: ""
+
+            SecondTopUpScreen(selectedMethod = selectedMethod){ amount ->
+                if(amount < 0) navController.popBackStack()
+                else navController.navigate("topUp3/$selectedMethod/$amount")
                 }
             }
-        }
-        composable(route = "topUp3") {
-            ThirdTopUpScreen(){ route ->
-                if(route == "topUp4"){
-                    navController.navigate("topUp4")
-                } else {
-                    navController.popBackStack()
-                }
+
+        composable(
+            route = "topUp3/{selectedMethod}/{chosenAmount}",
+            arguments = listOf(
+                navArgument("selectedMethod") { type = NavType.StringType },
+                navArgument("chosenAmount") { type = NavType.FloatType }
+            )
+        ) { backStackEntry ->
+            val selectedMethod = backStackEntry.arguments?.getString("selectedMethod") ?: ""
+            val chosenAmount = backStackEntry.arguments?.getFloat("chosenAmount") ?: 0.0f
+
+            ThirdTopUpScreen(selectedMethod = selectedMethod, chosenAmount = chosenAmount){ route ->
+                if(route == "topUp4") navController.navigate("topUp4/$selectedMethod/$chosenAmount")
+                else navController.popBackStack()
+
             }
         }
-        composable(route = "topUp4") {
-            TopUpSuccessScreen()
+
+        composable(
+            route = "topUp4/{selectedMethod}/{chosenAmount}",
+            arguments = listOf(
+                navArgument("selectedMethod") { type = NavType.StringType },
+                navArgument("chosenAmount") { type = NavType.FloatType }
+            )
+        ) { backStackEntry ->
+            val selectedMethod = backStackEntry.arguments?.getString("selectedMethod") ?: ""
+            val chosenAmount = backStackEntry.arguments?.getFloat("chosenAmount") ?: 0.0f
+
+            TopUpSuccessScreen(selectedMethod = selectedMethod, chosenAmount = chosenAmount){ route ->
+                if(route == "back") navController.navigate("home")
+                else navController.popBackStack()
+            }
         }
     }
 }

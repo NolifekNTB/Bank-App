@@ -14,6 +14,14 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowBackIos
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableDoubleStateOf
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -28,13 +36,15 @@ import com.example.bankapp.R
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
-fun SecondTopUpScreen(onNavigate: (String) -> Unit) {
+fun SecondTopUpScreen(selectedMethod: String, onNavigate: (Float) -> Unit) {
+    val amount = remember { mutableFloatStateOf(50.00f) }
+
     Scaffold(
         topBar = {
             TopAppBar(
                 title = { Text("Top Up") },
                 navigationIcon = {
-                    IconButton(onClick = { onNavigate("back") }) {
+                    IconButton(onClick = { onNavigate(-1.0f) }) {
                         Icon(
                             imageVector = Icons.Default.ArrowBack,
                             contentDescription = "Back"
@@ -53,11 +63,11 @@ fun SecondTopUpScreen(onNavigate: (String) -> Unit) {
         ) {
             BalanceSection()
             Spacer(modifier = Modifier.height(16.dp))
-            AmountSection()
+            AmountSection(amount)
             Spacer(modifier = Modifier.height(16.dp))
-            PaymentMethodSection()
+            PaymentMethodSection(selectedMethod)
             Spacer(modifier = Modifier.weight(1f))
-            ContinueButton(){route -> onNavigate("topUp3") }
+            ContinueButton(){onNavigate(amount.floatValue) }
         }
     }
 }
@@ -95,7 +105,11 @@ fun BalanceSection() {
 }
 
 @Composable
-fun AmountSection() {
+fun AmountSection(amount: MutableState<Float>) {
+    val amounts = listOf(10.00, 50.00, 100.00)
+    var selectedAmount by remember { mutableStateOf(amounts[1]) }
+    amount.value = selectedAmount.toFloat()
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -114,7 +128,7 @@ fun AmountSection() {
             modifier = Modifier.padding(top = 8.dp, bottom = 16.dp)
         )
         Text(
-            text = "$50.00",
+            text = "$$selectedAmount",
             fontSize = 32.sp,
             fontWeight = FontWeight.Bold,
             modifier = Modifier.padding(bottom = 16.dp)
@@ -123,29 +137,41 @@ fun AmountSection() {
             horizontalArrangement = Arrangement.SpaceEvenly,
             modifier = Modifier.fillMaxWidth()
         ) {
-            AmountOption("$10.00")
-            AmountOption("$50.00")
-            AmountOption("$100.00")
+            amounts.forEach { amount ->
+                AmountOption(amount = amount, isSelected = amount == selectedAmount) {
+                    selectedAmount = amount
+                }
+            }
         }
     }
 }
 
 @Composable
-fun AmountOption(amount: String) {
+fun AmountOption(amount: Double, isSelected: Boolean, onAmountSelected: () -> Unit) {
     Text(
-        text = amount,
+        text = "$$amount",
         fontSize = 16.sp,
         fontWeight = FontWeight.Bold,
-        color = if (amount == "$50.00") Color.White else Color.Black,
+        color = if (isSelected) Color.White else Color.Black,
         modifier = Modifier
-            .background(if (amount == "$50.00") Color.Blue else Color.Transparent, RoundedCornerShape(50))
+            .background(if (isSelected) Color.Blue else Color.Transparent, RoundedCornerShape(50))
             .padding(horizontal = 16.dp, vertical = 8.dp)
-            .clickable { /* Handle amount selection */ }
+            .clickable { onAmountSelected() }
     )
 }
 
 @Composable
-fun PaymentMethodSection() {
+fun PaymentMethodSection(selectedMethod: String) {
+    val image = when (selectedMethod){
+        "PayPal" -> R.drawable.ic_paypal
+        "Google Pay" -> R.drawable.ic_google_pay
+        "Trustly" -> R.drawable.ic_trustly
+        "Other E-Payment" -> R.drawable.ic_other_payment
+        "MasterCard" -> R.drawable.ic_mastercard
+        "Union Pay" -> R.drawable.ic_unionpay
+        else -> R.drawable.ic_paypal
+    }
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -171,13 +197,13 @@ fun PaymentMethodSection() {
                 modifier = Modifier.padding(16.dp)
             ) {
                 Image(
-                    painter = painterResource(id = R.drawable.ic_mastercard),
+                    painter = painterResource(id = image),
                     contentDescription = "MasterCard",
                     modifier = Modifier.size(24.dp)
                 )
                 Spacer(modifier = Modifier.width(16.dp))
                 Text(
-                    text = "MasterCard\n1803 1887 0623",
+                    text = "$selectedMethod\n1803 1887 0623",
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Medium
                 )
@@ -189,7 +215,7 @@ fun PaymentMethodSection() {
 @Composable
 fun ContinueButton(onNavigate: (String) -> Unit) {
     Button(
-        onClick = { onNavigate("topUp3") },
+        onClick = { onNavigate("") },
         modifier = Modifier
             .fillMaxWidth()
             .height(56.dp),

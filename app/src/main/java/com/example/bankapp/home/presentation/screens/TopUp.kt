@@ -58,17 +58,17 @@ fun TopUpScreen(onNavigate: (String) -> Unit) {
             )
 
             PaymentOptionSection(title = "E-Payment") {
-                PaymentOption(icon = R.drawable.ic_paypal, text = "PayPal") {route -> onNavigate(route)}
-                PaymentOption(icon = R.drawable.ic_google_pay, text = "Google Pay") {route -> onNavigate(route)}
-                PaymentOption(icon = R.drawable.ic_trustly, text = "Trustly") {route -> onNavigate(route)}
-                PaymentOption(icon = R.drawable.ic_other_payment, text = "Other E-Payment") {route -> onNavigate(route)}
+                PaymentOption(icon = R.drawable.ic_paypal, text = "PayPal") {method -> onNavigate(method)}
+                PaymentOption(icon = R.drawable.ic_google_pay, text = "Google Pay") {method-> onNavigate(method)}
+                PaymentOption(icon = R.drawable.ic_trustly, text = "Trustly") {method -> onNavigate(method)}
+                PaymentOption(icon = R.drawable.ic_other_payment, text = "Other E-Payment") {method -> onNavigate(method)}
             }
 
             Spacer(modifier = Modifier.height(16.dp))
 
             PaymentOptionSection(title = "Credit Card") {
-                PaymentOption(icon = R.drawable.ic_mastercard, text = "MasterCard"){route -> onNavigate(route)}
-                PaymentOption(icon = R.drawable.ic_unionpay, text = "Union Pay") {route -> onNavigate(route)}
+                PaymentOption(icon = R.drawable.ic_mastercard, text = "MasterCard"){method -> onNavigate(method)}
+                PaymentOption(icon = R.drawable.ic_unionpay, text = "Union Pay") {method -> onNavigate(method)}
             }
         }
     }
@@ -94,7 +94,7 @@ fun PaymentOption(icon: Int, text: String, onNavigate: (String) -> Unit) {
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 4.dp)
-            .clickable { onNavigate("topUp2") },
+            .clickable { onNavigate(text) },
         elevation = 4.dp
     ) {
         Row(
