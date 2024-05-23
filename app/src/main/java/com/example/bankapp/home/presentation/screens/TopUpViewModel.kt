@@ -1,6 +1,8 @@
 package com.example.bankapp.home.presentation.screens
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.bankapp.auth.data.repository.FirebaseUserRepositoryImpl
 import com.example.bankapp.auth.presentation.AuthViewModel
 import com.example.bankapp.core.data.remote.firebase.model.UserFireStore
@@ -9,6 +11,7 @@ import com.google.firebase.auth.auth
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 import org.koin.androidx.compose.getViewModel
 
 
@@ -23,9 +26,15 @@ class TopUpViewModel(
         return data!!
     }
 
-    suspend fun updateUserAccount(amount: Double){
-        val data = fetchUser()
-        val newAmount = data.balance + amount
-        repoFirebase.changeAccountBalance(userID.toString(), newAmount)
+    suspend fun updateUserAccount(amount: Double, onResult: (Boolean) -> Unit){
+        viewModelScope.launch {
+            try {
+                repoFirebase.changeAccountBalance(userID.toString(), amount)
+                onResult(true)
+            } catch (e: Exception) {
+                Log.e("TopUpViewModel", "Error updating user balance", e)
+                onResult(false)
+            }
+        }
     }
 }

@@ -2,6 +2,7 @@ package com.example.bankapp.home.presentation.screens
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
@@ -16,17 +17,20 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.bankapp.R
+import kotlinx.coroutines.launch
 import org.koin.androidx.compose.getViewModel
 
 
@@ -34,10 +38,8 @@ import org.koin.androidx.compose.getViewModel
 @Composable
 fun ThirdTopUpScreen(selectedMethod: String, chosenAmount: Float, onNavigate: (String) -> Unit) {
     val topUpViewModel: TopUpViewModel = getViewModel()
-
-    LaunchedEffect(onNavigate) {
-        topUpViewModel.updateUserAccount(chosenAmount.toDouble())
-    }
+    val scope = rememberCoroutineScope()
+    val context = LocalContext.current
 
     Scaffold(
         topBar = {
@@ -64,7 +66,17 @@ fun ThirdTopUpScreen(selectedMethod: String, chosenAmount: Float, onNavigate: (S
             Spacer(modifier = Modifier.height(16.dp))
             ConfirmationSection(selectedMethod, chosenAmount)
             Spacer(modifier = Modifier.weight(1f))
-            ContinueButton(){route -> onNavigate(route)}
+            ContinueButton(){ route ->
+                scope.launch {
+                    topUpViewModel.updateUserAccount(chosenAmount.toDouble()) { success ->
+                        if (success) {
+                            onNavigate(route)
+                        } else {
+                            Toast.makeText(context, "Failed to update balance", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                }
+            }
             Spacer(modifier = Modifier.height(16.dp))
             ChangeAmountButton()
         }

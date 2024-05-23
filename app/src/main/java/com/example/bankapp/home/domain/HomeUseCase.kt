@@ -1,5 +1,6 @@
 package com.example.bankapp.home.domain
 
+import android.util.Log
 import com.example.bankapp.auth.data.repository.FirebaseUserRepositoryImpl
 import com.example.bankapp.core.data.remote.firebase.model.LastTransactionsFireStore
 import com.example.bankapp.home.data.repository.LastTransactionsImpl
@@ -13,13 +14,6 @@ class HomeUseCase(
     private val repoFirebase: FirebaseUserRepositoryImpl
 ) {
     suspend fun loadData(userId: String): Result<String> {
-        val cachedUserData = repoRealm.getLoggedUser(userId)
-        val cachedFriends = repoRealm.getAllUsers()
-
-        if (cachedUserData != null && cachedUserData.userId.isNotEmpty()) {
-            return Result.success("Data loaded from cache")
-        }
-
         return try {
             val userDeferred = CoroutineScope(Dispatchers.IO).async { repoFirebase.fetchUser(userId) }
             val allUsersDeferred = CoroutineScope(Dispatchers.IO).async { repoFirebase.fetchProfiles() }
@@ -34,6 +28,22 @@ class HomeUseCase(
                 Result.success("Data loaded successfully")
             } else {
                 Result.failure(Exception("User not found"))
+            }
+        }  catch (e: Exception) {
+            Log.e("HomeUseCase", "Error loading data from Firebase, falling back to cache", e)
+            loadFromCache(userId)
+        }
+    }
+
+    private fun loadFromCache(userId: String): Result<String> {
+        return try {
+            val cachedUserData = repoRealm.getLoggedUser(userId)
+            val cachedFriends = repoRealm.getAllUsers()
+
+            if (cachedUserData != null && cachedUserData.userId.isNotEmpty()) {
+                Result.success("Data loaded from cache")
+            } else {
+                Result.failure(Exception("No cached data available"))
             }
         } catch (e: Exception) {
             Result.failure(e)

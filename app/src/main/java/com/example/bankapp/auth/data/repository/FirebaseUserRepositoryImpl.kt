@@ -51,10 +51,13 @@ class FirebaseUserRepositoryImpl(private val db: FirebaseFirestore): FirebaseUse
     }
 
     override suspend fun changeAccountBalance(userID: String, amount: Double) {
-        db.collection("users").document(userID)
-            .update(
-                "balance",
-                amount
-            )
+        val db = FirebaseFirestore.getInstance()
+        val userRef = db.collection("users").document(userID)
+        db.runTransaction { transaction ->
+            val snapshot = transaction.get(userRef)
+            val currentBalance = snapshot.getDouble("balance") ?: 0.0
+            val newBalance = currentBalance + amount
+            transaction.update(userRef, "balance", newBalance)
+        }.await()
     }
 }
