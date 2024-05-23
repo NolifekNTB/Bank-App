@@ -56,24 +56,27 @@ fun NavGraphBuilder.homeNavGraph(auth: FirebaseAuth, navController: NavHostContr
             val selectedMethod = backStackEntry.arguments?.getString("selectedMethod") ?: ""
             val chosenAmount = backStackEntry.arguments?.getFloat("chosenAmount") ?: 0.0f
 
-            ThirdTopUpScreen(selectedMethod = selectedMethod, chosenAmount = chosenAmount){ route ->
-                if(route == "topUp4") navController.navigate("topUp4/$selectedMethod/$chosenAmount")
+            ThirdTopUpScreen(selectedMethod = selectedMethod, chosenAmount = chosenAmount){ route, ifWorks ->
+                if(route == "topUp4") navController.navigate("topUp4/$selectedMethod/$chosenAmount/$ifWorks")
                 else navController.popBackStack()
 
             }
         }
 
         composable(
-            route = "topUp4/{selectedMethod}/{chosenAmount}",
+            route = "topUp4/{selectedMethod}/{chosenAmount}/{ifWorks}",
             arguments = listOf(
                 navArgument("selectedMethod") { type = NavType.StringType },
-                navArgument("chosenAmount") { type = NavType.FloatType }
+                navArgument("chosenAmount") { type = NavType.FloatType },
+                navArgument("ifWorks") { type = NavType.StringType }
             )
         ) { backStackEntry ->
             val selectedMethod = backStackEntry.arguments?.getString("selectedMethod") ?: ""
             val chosenAmount = backStackEntry.arguments?.getFloat("chosenAmount") ?: 0.0f
+            val ifWorks = backStackEntry.arguments?.getString("ifWorks") ?: ""
 
-            TopUpSuccessScreen(selectedMethod = selectedMethod, chosenAmount = chosenAmount){ route ->
+            TopUpSuccessScreen(selectedMethod = selectedMethod, chosenAmount = chosenAmount, ifWorks = ifWorks)
+            { route ->
                 if(route == "back") navController.navigate("home")
                 else navController.popBackStack()
             }

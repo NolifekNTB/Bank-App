@@ -36,17 +36,16 @@ import org.koin.androidx.compose.getViewModel
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
-fun ThirdTopUpScreen(selectedMethod: String, chosenAmount: Float, onNavigate: (String) -> Unit) {
+fun ThirdTopUpScreen(selectedMethod: String, chosenAmount: Float, onNavigate: (String, String) -> Unit) {
     val topUpViewModel: TopUpViewModel = getViewModel()
     val scope = rememberCoroutineScope()
-    val context = LocalContext.current
 
     Scaffold(
         topBar = {
             TopAppBar(
                 title = { Text("Top Up") },
                 navigationIcon = {
-                    IconButton(onClick = { onNavigate("back") }) {
+                    IconButton(onClick = { onNavigate("back", "") }) {
                         Icon(
                             imageVector = Icons.Default.ArrowBack,
                             contentDescription = "Back"
@@ -70,9 +69,9 @@ fun ThirdTopUpScreen(selectedMethod: String, chosenAmount: Float, onNavigate: (S
                 scope.launch {
                     topUpViewModel.updateUserAccount(chosenAmount.toDouble()) { success ->
                         if (success) {
-                            onNavigate(route)
+                            onNavigate(route, "works")
                         } else {
-                            Toast.makeText(context, "Failed to update balance", Toast.LENGTH_SHORT).show()
+                            onNavigate(route, "not")
                         }
                     }
                 }

@@ -27,7 +27,8 @@ class HomeUseCase(
                 repoRealm.replaceFriends(users)
                 Result.success("Data loaded successfully")
             } else {
-                Result.failure(Exception("User not found"))
+                Log.e("HomeUseCase", "User not found, falling back to cache")
+                loadFromCache(userId)
             }
         }  catch (e: Exception) {
             Log.e("HomeUseCase", "Error loading data from Firebase, falling back to cache", e)

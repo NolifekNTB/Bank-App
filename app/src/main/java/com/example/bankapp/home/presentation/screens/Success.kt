@@ -20,6 +20,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Error
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
@@ -28,7 +29,12 @@ import com.example.bankapp.R
 
 
 @Composable
-fun TopUpSuccessScreen(selectedMethod: String, chosenAmount: Float, onNavigate: (String) -> Unit) {
+fun TopUpSuccessScreen(
+    selectedMethod: String,
+    chosenAmount: Float,
+    ifWorks: String,
+    onNavigate: (String) -> Unit)
+{
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -62,24 +68,45 @@ fun TopUpSuccessScreen(selectedMethod: String, chosenAmount: Float, onNavigate: 
                 .background(Color.White, shape = RoundedCornerShape(20.dp))
                 .padding(16.dp)
         ) {
-            Icon(
-                imageVector = Icons.Default.Check,
-                contentDescription = "Success Icon",
-                modifier = Modifier.size(64.dp)
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-            Text(
-                text = "Great!",
-                fontSize = 24.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color(0xFF00C853)
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = "Top Up Success",
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold
-            )
+            if (ifWorks == "works") {
+                Icon(
+                    imageVector = Icons.Default.Check,
+                    contentDescription = "Success Icon",
+                    modifier = Modifier.size(64.dp)
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+                Text(
+                    text = "Great!",
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color(0xFF00C853)
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = "Top Up Success",
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold
+                )
+            } else {
+                Icon(
+                    imageVector = Icons.Default.Error,
+                    contentDescription = "Failure Icon",
+                    modifier = Modifier.size(64.dp)
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+                Text(
+                    text = "Oops!",
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color(0xFFD32F2F)
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = "Top Up Failed",
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold
+                )
+            }
             Spacer(modifier = Modifier.height(8.dp))
             Text(
                 text = "March 03, 2024  ·  09:30:06 AM",
