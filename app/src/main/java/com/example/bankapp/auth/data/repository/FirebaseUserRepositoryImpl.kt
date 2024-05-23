@@ -49,4 +49,12 @@ class FirebaseUserRepositoryImpl(private val db: FirebaseFirestore): FirebaseUse
                 FieldValue.arrayUnion(transaction)
             )
     }
+
+    override suspend fun changeAccountBalance(userID: String, amount: Double) {
+        db.collection("users").document(userID)
+            .update(
+                "balance",
+                amount
+            )
+    }
 }

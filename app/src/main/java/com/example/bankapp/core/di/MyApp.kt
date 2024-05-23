@@ -6,6 +6,7 @@ import com.example.bankapp.core.data.local.realm.model.FriendRealm
 import com.example.bankapp.core.data.local.realm.model.LastTransactionsRealm
 import com.example.bankapp.core.data.local.realm.model.UserRealm
 import com.example.bankapp.home.di.homeModule
+import com.example.bankapp.home.di.topUpModule
 import io.realm.kotlin.Realm
 import io.realm.kotlin.RealmConfiguration
 import org.koin.android.ext.koin.androidContext
@@ -43,6 +44,7 @@ class MyApp: Application() {
             modules(coreModule)
             modules(authModule)
             modules(homeModule)
+            modules(topUpModule)
         }
     }
 }
