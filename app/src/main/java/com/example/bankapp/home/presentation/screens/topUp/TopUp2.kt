@@ -1,32 +1,25 @@
+package com.example.bankapp.home.presentation.screens.topUp
+
 import android.annotation.SuppressLint
-import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowBackIos
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -55,20 +48,26 @@ fun SecondTopUpScreen(selectedMethod: String, onNavigate: (Float) -> Unit) {
             )
         }
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(Color(0xFFEDEFF3))
-                .padding(16.dp)
-        ) {
-            BalanceSection()
-            Spacer(modifier = Modifier.height(16.dp))
-            AmountSection(amount)
-            Spacer(modifier = Modifier.height(16.dp))
-            PaymentMethodSection(selectedMethod)
-            Spacer(modifier = Modifier.weight(1f))
-            ContinueButton(){onNavigate(amount.floatValue) }
-        }
+        TopUpScreenContent(selectedMethod, amount, onNavigate)
+
+    }
+}
+
+@Composable
+fun TopUpScreenContent(selectedMethod: String, amount: MutableState<Float>, onNavigate: (Float) -> Unit) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color(0xFFEDEFF3))
+            .padding(16.dp)
+    ) {
+        BalanceSection()
+        Spacer(modifier = Modifier.height(16.dp))
+        AmountSection(amount)
+        Spacer(modifier = Modifier.height(16.dp))
+        PaymentMethodSection(selectedMethod)
+        Spacer(modifier = Modifier.weight(1f))
+        ContinueButton(){onNavigate(amount.value) }
     }
 }
 
@@ -98,7 +97,9 @@ fun BalanceSection() {
             Icon(
                 imageVector = Icons.Default.Refresh,
                 contentDescription = "Refresh",
-                modifier = Modifier.size(24.dp).clickable { /* Handle refresh */ }
+                modifier = Modifier
+                    .size(24.dp)
+                    .clickable { /* Handle refresh */ }
             )
         }
     }
@@ -184,30 +185,35 @@ fun PaymentMethodSection(selectedMethod: String) {
             fontWeight = FontWeight.Bold,
             modifier = Modifier.padding(bottom = 8.dp)
         )
-        Card(
-            shape = RoundedCornerShape(8.dp),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 4.dp)
-                .clickable { /* Handle click */ },
-            elevation = 4.dp
+        PaymentMethodCard(image, selectedMethod)
+    }
+}
+
+@Composable
+fun PaymentMethodCard(image: Int, selectedMethod: String) {
+    Card(
+        shape = RoundedCornerShape(8.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 4.dp)
+            .clickable { /* Handle click */ },
+        elevation = 4.dp
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.padding(16.dp)
         ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.padding(16.dp)
-            ) {
-                Image(
-                    painter = painterResource(id = image),
-                    contentDescription = "MasterCard",
-                    modifier = Modifier.size(24.dp)
-                )
-                Spacer(modifier = Modifier.width(16.dp))
-                Text(
-                    text = "$selectedMethod\n1803 1887 0623",
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Medium
-                )
-            }
+            Image(
+                painter = painterResource(id = image),
+                contentDescription = "MasterCard",
+                modifier = Modifier.size(24.dp)
+            )
+            Spacer(modifier = Modifier.width(16.dp))
+            Text(
+                text = "$selectedMethod\n1803 1887 0623",
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Medium
+            )
         }
     }
 }

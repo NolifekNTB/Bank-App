@@ -1,10 +1,9 @@
-package com.example.bankapp.home.presentation.screens
+package com.example.bankapp.home.presentation.screens.topUp
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.bankapp.auth.data.repository.FirebaseUserRepositoryImpl
-import com.example.bankapp.auth.presentation.AuthViewModel
 import com.example.bankapp.core.data.remote.firebase.model.UserFireStore
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
@@ -12,7 +11,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
-import org.koin.androidx.compose.getViewModel
 
 
 class TopUpViewModel(

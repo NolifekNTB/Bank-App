@@ -1,13 +1,15 @@
+package com.example.bankapp.home.presentation.screens.topUp
+
 import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+//noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Check
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -38,38 +40,43 @@ fun TopUpScreen(onNavigate: (String) -> Unit) {
             )
         }
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(Color(0xFFEDEFF3))
-                .padding(16.dp)
-        ) {
-            Text(
-                text = "Top Up The Account",
-                fontSize = 24.sp,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(bottom = 8.dp)
-            )
-            Text(
-                text = "Choose your preferred method",
-                fontSize = 16.sp,
-                color = Color.Gray,
-                modifier = Modifier.padding(bottom = 16.dp)
-            )
+        TopUpContent(onNavigate)
+    }
+}
 
-            PaymentOptionSection(title = "E-Payment") {
-                PaymentOption(icon = R.drawable.ic_paypal, text = "PayPal") {method -> onNavigate(method)}
-                PaymentOption(icon = R.drawable.ic_google_pay, text = "Google Pay") {method-> onNavigate(method)}
-                PaymentOption(icon = R.drawable.ic_trustly, text = "Trustly") {method -> onNavigate(method)}
-                PaymentOption(icon = R.drawable.ic_other_payment, text = "Other E-Payment") {method -> onNavigate(method)}
-            }
+@Composable
+fun TopUpContent(onNavigate: (String) -> Unit) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color(0xFFEDEFF3))
+            .padding(16.dp)
+    ) {
+        Text(
+            text = "Top Up The Account",
+            fontSize = 24.sp,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.padding(bottom = 8.dp)
+        )
+        Text(
+            text = "Choose your preferred method",
+            fontSize = 16.sp,
+            color = Color.Gray,
+            modifier = Modifier.padding(bottom = 16.dp)
+        )
 
-            Spacer(modifier = Modifier.height(16.dp))
+        PaymentOptionSection(title = "E-Payment") {
+            PaymentOption(icon = R.drawable.ic_paypal, text = "PayPal") {method -> onNavigate(method)}
+            PaymentOption(icon = R.drawable.ic_google_pay, text = "Google Pay") {method-> onNavigate(method)}
+            PaymentOption(icon = R.drawable.ic_trustly, text = "Trustly") {method -> onNavigate(method)}
+            PaymentOption(icon = R.drawable.ic_other_payment, text = "Other E-Payment") {method -> onNavigate(method)}
+        }
 
-            PaymentOptionSection(title = "Credit Card") {
-                PaymentOption(icon = R.drawable.ic_mastercard, text = "MasterCard"){method -> onNavigate(method)}
-                PaymentOption(icon = R.drawable.ic_unionpay, text = "Union Pay") {method -> onNavigate(method)}
-            }
+        Spacer(modifier = Modifier.height(16.dp))
+
+        PaymentOptionSection(title = "Credit Card") {
+            PaymentOption(icon = R.drawable.ic_mastercard, text = "MasterCard"){method -> onNavigate(method)}
+            PaymentOption(icon = R.drawable.ic_unionpay, text = "Union Pay") {method -> onNavigate(method)}
         }
     }
 }
