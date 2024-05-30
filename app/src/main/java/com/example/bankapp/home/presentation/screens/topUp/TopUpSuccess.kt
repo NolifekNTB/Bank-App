@@ -17,15 +17,15 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Error
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.zIndex
+import com.google.protobuf.Internal.BooleanList
 
 
 @Composable
 fun TopUpSuccessScreen(
-    selectedMethod: String,
-    chosenAmount: Float,
-    ifWorks: String,
+    topUpViewModel: TopUpViewModel,
     onNavigate: (String) -> Unit)
 {
     Box(
@@ -39,7 +39,7 @@ fun TopUpSuccessScreen(
             .padding(16.dp)
     ) {
         CloseButton(Modifier.align(Alignment.TopStart), onNavigate)
-        SuccessContent(ifWorks, chosenAmount, selectedMethod)
+        SuccessContent(topUpViewModel)
     }
 }
 
@@ -61,7 +61,13 @@ fun CloseButton(modifier: Modifier, onNavigate: (String) -> Unit) {
 }
 
 @Composable
-fun SuccessContent(ifWorks: String, chosenAmount: Float, selectedMethod: String) {
+fun SuccessContent(topUpViewModel: TopUpViewModel) {
+    val state = topUpViewModel.state.collectAsState()
+
+    val ifWorks = state.value.ifWorks
+    val chosenAmount = state.value.chosenAmount
+    val selectedMethod = state.value.selectedMethod
+
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
@@ -83,23 +89,23 @@ fun SuccessContent(ifWorks: String, chosenAmount: Float, selectedMethod: String)
         Spacer(modifier = Modifier.height(16.dp))
         Divider(color = Color.Gray, thickness = 1.dp)
         Spacer(modifier = Modifier.height(16.dp))
-        PaymentMethod(selectedMethod)
+        PaymentMethod(topUpViewModel = topUpViewModel, selectedMethod = selectedMethod)
     }
 }
 
 @Composable
-fun SuccessOrFailureIcon(ifWorks: String) {
-    val icon = if (ifWorks == "works") Icons.Default.Check else Icons.Default.Error
+fun SuccessOrFailureIcon(ifWorks: Boolean?) {
+    val icon = if (ifWorks != null && ifWorks) Icons.Default.Check else Icons.Default.Error
     Icon(
         imageVector = icon,
-        contentDescription = if (ifWorks == "works") "Success Icon" else "Failure Icon",
+        contentDescription = if (ifWorks != null && ifWorks) "Success Icon" else "Failure Icon",
         modifier = Modifier.size(64.dp)
     )
 }
 
 @Composable
-fun SuccessOrFailureText(ifWorks: String) {
-    val (message, color) = if (ifWorks == "works") {
+fun SuccessOrFailureText(ifWorks: Boolean?) {
+    val (message, color) = if (ifWorks != null && ifWorks) {
         "Great!" to Color(0xFF00C853)
     } else {
         "Oops!" to Color(0xFFD32F2F)
@@ -112,7 +118,7 @@ fun SuccessOrFailureText(ifWorks: String) {
     )
     Spacer(modifier = Modifier.height(8.dp))
     Text(
-        text = if (ifWorks == "works") "Top Up Success" else "Top Up Failed",
+        text = if (ifWorks != null && ifWorks) "Top Up Success" else "Top Up Failed",
         fontSize = 20.sp,
         fontWeight = FontWeight.Bold
     )
@@ -134,11 +140,11 @@ fun DateAndReference() {
 }
 
 @Composable
-fun TopUpSummary(chosenAmount: Float) {
+fun TopUpSummary(chosenAmount: Float?) {
     Column {
         SummaryRow(label = "Amount", value = "$$chosenAmount")
         SummaryRow(label = "Admin Fee", value = "$1.00")
-        SummaryRow(label = "Total", value = "$${chosenAmount+1.00f}", fontWeight = FontWeight.Bold)
+        SummaryRow(label = "Total", value = "$${chosenAmount!!+1.00f}", fontWeight = FontWeight.Bold)
     }
 }
 
@@ -154,8 +160,8 @@ fun SummaryRow(label: String, value: String, fontWeight: FontWeight = FontWeight
 }
 
 @Composable
-fun PaymentMethod(selectedMethod: String) {
-    val image = getPaymentMethodIcon(selectedMethod)
+fun PaymentMethod(topUpViewModel: TopUpViewModel, selectedMethod: String?) {
+    val image = topUpViewModel.getPaymentMethodIcon()
 
     Row(
         modifier = Modifier
@@ -171,7 +177,7 @@ fun PaymentMethod(selectedMethod: String) {
         )
         Spacer(modifier = Modifier.width(16.dp))
         Column {
-            Text(text = selectedMethod, fontSize = 16.sp, fontWeight = FontWeight.Bold)
+            Text(text = selectedMethod!!, fontSize = 16.sp, fontWeight = FontWeight.Bold)
             Text(text = "1803 1887 0623", fontSize = 14.sp, color = Color.Gray)
         }
     }

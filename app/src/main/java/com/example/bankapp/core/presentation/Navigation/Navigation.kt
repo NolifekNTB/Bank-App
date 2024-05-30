@@ -29,9 +29,11 @@ import com.example.bankapp.auth.presentation.AuthViewModel
 import com.example.bankapp.auth.presentation.LoginScreen
 import com.example.bankapp.auth.presentation.mvi.AuthViewState
 import com.example.bankapp.home.presentation.HomeScreen
+import com.example.bankapp.home.presentation.screens.topUp.TopUpViewModel
 import com.google.firebase.auth.FirebaseAuth
 import org.koin.androidx.compose.getViewModel
 import org.koin.androidx.compose.inject
+import org.koin.androidx.compose.koinViewModel
 
 
 @Composable
@@ -40,6 +42,7 @@ fun AppNavigation() {
     val navController = rememberNavController()
     val viewState by authViewModel.viewState.collectAsState()
     val auth by inject<FirebaseAuth>()
+    val topUpViewModel: TopUpViewModel = getViewModel()
 
     val startDestination = if (viewState is AuthViewState.Success) "homeGraph" else "login"
 
@@ -48,7 +51,7 @@ fun AppNavigation() {
             if (viewState is AuthViewState.Success) BottomNavigationBar(navController)
         }
     ) { innerPadding ->
-        NavigationHost(navController, startDestination, innerPadding, authViewModel, auth)
+        NavigationHost(navController, startDestination, innerPadding, authViewModel, auth, topUpViewModel)
     }
 }
 
@@ -58,7 +61,8 @@ fun NavigationHost(
     startDestination: String,
     innerPadding: PaddingValues,
     authViewModel: AuthViewModel,
-    auth: FirebaseAuth
+    auth: FirebaseAuth,
+    topUpViewModel: TopUpViewModel
 ) {
     NavHost(
         navController = navController,
@@ -66,7 +70,7 @@ fun NavigationHost(
         modifier = Modifier.padding(innerPadding)
     ) {
         composable("login") { LoginScreen(navController, authViewModel) }
-        homeNavGraph(auth = auth, navController = navController)
+        homeNavGraph(auth = auth, navController = navController, topUpViewModel = topUpViewModel)
         composable("history") { HistoryScreen() }
         composable("pay") { PayScreen() }
         composable("card") { CardScreen() }

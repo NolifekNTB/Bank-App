@@ -10,5 +10,4 @@ data class UserFireStore(
     @PropertyName("profilePicUrl") var profilePicUrl: String = "",
     @PropertyName("balance") var balance: Double = 0.0,
     @PropertyName("lastTransactions") var lastTransactions: List<LastTransactionsFireStore> = emptyList(),
-    //@PropertyName("friendsIDs") var friendsIDs: List<String> = emptyList() //TODO
 )

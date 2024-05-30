@@ -9,9 +9,9 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -24,18 +24,14 @@ import androidx.compose.ui.unit.sp
 import com.example.bankapp.R
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-import org.koin.androidx.compose.getViewModel
 
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
-fun ThirdTopUpScreen(selectedMethod: String, chosenAmount: Float, onNavigate: (String, String) -> Unit) {
-    val topUpViewModel: TopUpViewModel = getViewModel()
-    val scope = rememberCoroutineScope()
-
+fun ThirdTopUpScreen(topUpViewModel: TopUpViewModel, onNavigate: (String) -> Unit) {
     Scaffold(
         topBar = {
-            TopUpAppBar(onNavigate)
+            TopUpAppBar(){ onNavigate("back") }
         }
     ) {
         Column(
@@ -45,22 +41,24 @@ fun ThirdTopUpScreen(selectedMethod: String, chosenAmount: Float, onNavigate: (S
                 .padding(16.dp) 
         ) {
             Spacer(modifier = Modifier.height(16.dp))
-            ConfirmationSection(selectedMethod, chosenAmount)
+            ConfirmationSection(topUpViewModel = topUpViewModel)
             Spacer(modifier = Modifier.weight(1f))
-            ContinueButton { route ->
-                handleContinueButtonClick(scope, topUpViewModel, chosenAmount, onNavigate, route)
+            ContinueButton3() { route ->
+                onNavigate(route)
+                topUpViewModel.handleContinueButtonClick()
             }
             Spacer(modifier = Modifier.height(16.dp))
-            ChangeAmountButton(){ route, _ ->
-                onNavigate(route, "")
-            }
+            ChangeAmountButton(){ onNavigate("") }
         }
     }
 }
 
 @Composable
-fun ConfirmationSection(selectedMethod: String, chosenAmount: Float) {
-    val imageResource = getPaymentMethodIcon(selectedMethod)
+fun ConfirmationSection(topUpViewModel: TopUpViewModel) {
+    val imageResource = topUpViewModel.getPaymentMethodIcon()
+    val state = topUpViewModel.state.collectAsState()
+    val chosenAmount = state.value.chosenAmount ?: 0f
+    val selectedMethod = state.value.selectedMethod ?: ""
 
     Column(
         modifier = Modifier
@@ -77,19 +75,6 @@ fun ConfirmationSection(selectedMethod: String, chosenAmount: Float) {
         DetailRow(label = "Total", value = chosenAmount + 1.00f)
         Spacer(modifier = Modifier.height(16.dp))
         PaymentMethodCard(selectedMethod, imageResource)
-    }
-}
-
-
-fun getPaymentMethodIcon(selectedMethod: String): Int {
-    return when (selectedMethod) {
-        "Paypal" -> R.drawable.ic_paypal
-        "Google Pay" -> R.drawable.ic_google_pay
-        "Trustly" -> R.drawable.ic_trustly
-        "Other E-Payment" -> R.drawable.ic_other_payment
-        "Mastercard" -> R.drawable.ic_mastercard
-        "Union Pay" -> R.drawable.ic_unionpay
-        else -> R.drawable.ic_google_pay
     }
 }
 
@@ -191,33 +176,15 @@ fun PaymentMethodCard(selectedMethod: String, imageResource: Int) {
 }
 
 @Composable
-fun ChangeAmountButton(onNavigate: (String, String) -> Unit) {
+fun ChangeAmountButton(onNavigate: () -> Unit) {
     Text(
         text = "Change Amount",
         fontSize = 16.sp,
         color = Color.Blue,
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { onNavigate("back", "") }
+            .clickable { onNavigate() }
             .padding(16.dp),
         textAlign = TextAlign.Center
     )
-}
-
-fun handleContinueButtonClick(
-    scope: CoroutineScope,
-    topUpViewModel: TopUpViewModel,
-    chosenAmount: Float,
-    onNavigate: (String, String) -> Unit,
-    route: String
-) {
-    scope.launch {
-        topUpViewModel.updateUserAccount(chosenAmount.toDouble()) { success ->
-            if (success) {
-                onNavigate(route, "works")
-            } else {
-                onNavigate(route, "not")
-            }
-        }
-    }
 }

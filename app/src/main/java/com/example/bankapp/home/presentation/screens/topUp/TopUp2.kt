@@ -12,7 +12,9 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -25,19 +27,18 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.bankapp.R
+import com.example.bankapp.home.presentation.screens.topUp.mvi.TopUpIntent
 
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
-fun SecondTopUpScreen(selectedMethod: String, onNavigate: (Float) -> Unit) {
-    val amount = remember { mutableFloatStateOf(50.00f) }
-
+fun SecondTopUpScreen(topUpViewModel: TopUpViewModel, onNavigate: (String) -> Unit) {
     Scaffold(
         topBar = {
             TopAppBar(
                 title = { Text("Top Up") },
                 navigationIcon = {
-                    IconButton(onClick = { onNavigate(-1.0f) }) {
+                    IconButton(onClick = { onNavigate("back") }) {
                         Icon(
                             imageVector = Icons.Default.ArrowBack,
                             contentDescription = "Back"
@@ -48,13 +49,16 @@ fun SecondTopUpScreen(selectedMethod: String, onNavigate: (Float) -> Unit) {
             )
         }
     ) {
-        TopUpScreenContent(selectedMethod, amount, onNavigate)
+        TopUpScreenContent(topUpViewModel) { onNavigate("") }
 
     }
 }
 
 @Composable
-fun TopUpScreenContent(selectedMethod: String, amount: MutableState<Float>, onNavigate: (Float) -> Unit) {
+fun TopUpScreenContent(topUpViewModel: TopUpViewModel, onNavigate: () -> Unit) {
+    val state = topUpViewModel.state.collectAsState()
+    val selectedMethod = state.value.selectedMethod ?: ""
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -63,11 +67,11 @@ fun TopUpScreenContent(selectedMethod: String, amount: MutableState<Float>, onNa
     ) {
         BalanceSection()
         Spacer(modifier = Modifier.height(16.dp))
-        AmountSection(amount)
+        AmountSection(topUpViewModel = topUpViewModel)
         Spacer(modifier = Modifier.height(16.dp))
         PaymentMethodSection(selectedMethod)
         Spacer(modifier = Modifier.weight(1f))
-        ContinueButton(){onNavigate(amount.value) }
+        ContinueButton(topUpViewModel = topUpViewModel){ onNavigate() }
     }
 }
 
@@ -106,10 +110,9 @@ fun BalanceSection() {
 }
 
 @Composable
-fun AmountSection(amount: MutableState<Float>) {
-    val amounts = listOf(10.00, 50.00, 100.00)
-    var selectedAmount by remember { mutableStateOf(amounts[1]) }
-    amount.value = selectedAmount.toFloat()
+fun AmountSection(topUpViewModel: TopUpViewModel) {
+    val amounts = listOf(10.00f, 50.00f, 100.00f)
+    var selectedAmount by remember { mutableFloatStateOf(amounts[1]) }
 
     Column(
         modifier = Modifier
@@ -141,6 +144,7 @@ fun AmountSection(amount: MutableState<Float>) {
             amounts.forEach { amount ->
                 AmountOption(amount = amount, isSelected = amount == selectedAmount) {
                     selectedAmount = amount
+                    topUpViewModel.handleIntent(TopUpIntent.ChooseAmount(selectedAmount))
                 }
             }
         }
@@ -148,7 +152,7 @@ fun AmountSection(amount: MutableState<Float>) {
 }
 
 @Composable
-fun AmountOption(amount: Double, isSelected: Boolean, onAmountSelected: () -> Unit) {
+fun AmountOption(amount: Float, isSelected: Boolean, onAmountSelected: () -> Unit) {
     Text(
         text = "$$amount",
         fontSize = 16.sp,
@@ -219,9 +223,15 @@ fun PaymentMethodCard(image: Int, selectedMethod: String) {
 }
 
 @Composable
-fun ContinueButton(onNavigate: (String) -> Unit) {
+fun ContinueButton(topUpViewModel: TopUpViewModel, onNavigate: (String) -> Unit) {
+    val state = topUpViewModel.state.collectAsState()
+    val ifWorks = state.value.ifWorks
+    
     Button(
-        onClick = { onNavigate("") },
+        onClick = {
+            if(ifWorks == true) onNavigate("")
+            else onNavigate("back")
+        },
         modifier = Modifier
             .fillMaxWidth()
             .height(56.dp),

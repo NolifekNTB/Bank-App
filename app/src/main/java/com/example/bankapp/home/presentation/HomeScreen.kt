@@ -175,7 +175,7 @@ fun ActionButtons(onNavigation: (String) -> Unit) {
 @Composable
 fun ActionButton(text: String, color: Color, onNavigation: (String) -> Unit) {
     Button(
-        onClick = { onNavigation(text) },
+        onClick = { onNavigation("TopUp") },
         colors = ButtonDefaults.buttonColors(containerColor = color)
     ) {
         Text(text = text)

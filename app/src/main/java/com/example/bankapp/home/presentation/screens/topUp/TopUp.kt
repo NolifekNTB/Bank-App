@@ -19,11 +19,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.bankapp.R
+import com.example.bankapp.home.presentation.screens.topUp.mvi.TopUpIntent
 
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
-fun TopUpScreen(onNavigate: (String) -> Unit) {
+fun TopUpScreen(topUpViewModel: TopUpViewModel, onNavigate: (String) -> Unit) {
     Scaffold(
         topBar = {
             TopAppBar(
@@ -40,12 +41,12 @@ fun TopUpScreen(onNavigate: (String) -> Unit) {
             )
         }
     ) {
-        TopUpContent(onNavigate)
+        TopUpContent(topUpViewModel) { onNavigate("") }
     }
 }
 
 @Composable
-fun TopUpContent(onNavigate: (String) -> Unit) {
+fun TopUpContent(topUpViewModel: TopUpViewModel, onNavigate: () -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -66,17 +67,35 @@ fun TopUpContent(onNavigate: (String) -> Unit) {
         )
 
         PaymentOptionSection(title = "E-Payment") {
-            PaymentOption(icon = R.drawable.ic_paypal, text = "PayPal") {method -> onNavigate(method)}
-            PaymentOption(icon = R.drawable.ic_google_pay, text = "Google Pay") {method-> onNavigate(method)}
-            PaymentOption(icon = R.drawable.ic_trustly, text = "Trustly") {method -> onNavigate(method)}
-            PaymentOption(icon = R.drawable.ic_other_payment, text = "Other E-Payment") {method -> onNavigate(method)}
+            PaymentOption(icon = R.drawable.ic_paypal, text = "PayPal") { method ->
+                topUpViewModel.handleIntent(TopUpIntent.SelectMethod(method))
+                onNavigate()
+            }
+            PaymentOption(icon = R.drawable.ic_google_pay, text = "Google Pay") { method->
+                topUpViewModel.handleIntent(TopUpIntent.SelectMethod(method))
+                onNavigate()
+            }
+            PaymentOption(icon = R.drawable.ic_trustly, text = "Trustly") { method ->
+                topUpViewModel.handleIntent(TopUpIntent.SelectMethod(method))
+                onNavigate()
+            }
+            PaymentOption(icon = R.drawable.ic_other_payment, text = "Other E-Payment") { method ->
+                topUpViewModel.handleIntent(TopUpIntent.SelectMethod(method))
+                onNavigate()
+            }
         }
 
         Spacer(modifier = Modifier.height(16.dp))
 
         PaymentOptionSection(title = "Credit Card") {
-            PaymentOption(icon = R.drawable.ic_mastercard, text = "MasterCard"){method -> onNavigate(method)}
-            PaymentOption(icon = R.drawable.ic_unionpay, text = "Union Pay") {method -> onNavigate(method)}
+            PaymentOption(icon = R.drawable.ic_mastercard, text = "MasterCard"){ method ->
+                topUpViewModel.handleIntent(TopUpIntent.SelectMethod(method))
+                onNavigate()
+            }
+            PaymentOption(icon = R.drawable.ic_unionpay, text = "Union Pay") { method ->
+                topUpViewModel.handleIntent(TopUpIntent.SelectMethod(method))
+                onNavigate()
+            }
         }
     }
 }
