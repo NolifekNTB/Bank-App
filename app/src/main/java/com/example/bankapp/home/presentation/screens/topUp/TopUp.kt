@@ -1,6 +1,7 @@
 package com.example.bankapp.home.presentation.screens.topUp
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -66,35 +67,41 @@ fun TopUpContent(topUpViewModel: TopUpViewModel, onNavigate: () -> Unit) {
             modifier = Modifier.padding(bottom = 16.dp)
         )
 
+
+        //TODO
+        val drawableList = listOf(
+            R.drawable.ic_paypal, R.drawable.ic_google_pay,
+            R.drawable.ic_trustly, R.drawable.ic_other_payment
+        )
+        val textList = listOf(
+            "PayPal", "Google Pay", "Trustly", "Other E-Payment"
+        )
+
         PaymentOptionSection(title = "E-Payment") {
-            PaymentOption(icon = R.drawable.ic_paypal, text = "PayPal") { method ->
-                topUpViewModel.handleIntent(TopUpIntent.SelectMethod(method))
-                onNavigate()
-            }
-            PaymentOption(icon = R.drawable.ic_google_pay, text = "Google Pay") { method->
-                topUpViewModel.handleIntent(TopUpIntent.SelectMethod(method))
-                onNavigate()
-            }
-            PaymentOption(icon = R.drawable.ic_trustly, text = "Trustly") { method ->
-                topUpViewModel.handleIntent(TopUpIntent.SelectMethod(method))
-                onNavigate()
-            }
-            PaymentOption(icon = R.drawable.ic_other_payment, text = "Other E-Payment") { method ->
-                topUpViewModel.handleIntent(TopUpIntent.SelectMethod(method))
-                onNavigate()
+            repeat(drawableList.size){ index ->
+                PaymentOption(icon = drawableList[index], text = textList[index]) { method ->
+                    topUpViewModel.handleIntent(TopUpIntent.SelectMethod(method))
+                    onNavigate()
+                }
             }
         }
 
         Spacer(modifier = Modifier.height(16.dp))
 
+        val drawableList2 = listOf(
+            R.drawable.ic_mastercard, R.drawable.ic_unionpay
+        )
+
+        val textList2 = listOf(
+            "MasterCard", "Union Pay"
+        )
+
         PaymentOptionSection(title = "Credit Card") {
-            PaymentOption(icon = R.drawable.ic_mastercard, text = "MasterCard"){ method ->
-                topUpViewModel.handleIntent(TopUpIntent.SelectMethod(method))
-                onNavigate()
-            }
-            PaymentOption(icon = R.drawable.ic_unionpay, text = "Union Pay") { method ->
-                topUpViewModel.handleIntent(TopUpIntent.SelectMethod(method))
-                onNavigate()
+            repeat(drawableList2.size){
+                PaymentOption(icon = drawableList2[it], text = textList2[it]){ method ->
+                    topUpViewModel.handleIntent(TopUpIntent.SelectMethod(method))
+                    onNavigate()
+                }
             }
         }
     }

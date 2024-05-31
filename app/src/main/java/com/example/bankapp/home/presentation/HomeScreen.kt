@@ -166,7 +166,7 @@ fun ActionButtons(onNavigation: (String) -> Unit) {
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceEvenly
     ) {
-        ActionButton(text = "Top Up", color = Color(0xFF77DD77)){route -> onNavigation(route)}
+        ActionButton(text = "TopUp", color = Color(0xFF77DD77)){route -> onNavigation(route)}
         ActionButton(text = "Transfer", color = Color(0xFFFFD700)){route -> onNavigation(route)}
         ActionButton(text = "Withdraw", color = Color(0xFFFFA07A)){route -> onNavigation(route)}
     }
@@ -175,7 +175,7 @@ fun ActionButtons(onNavigation: (String) -> Unit) {
 @Composable
 fun ActionButton(text: String, color: Color, onNavigation: (String) -> Unit) {
     Button(
-        onClick = { onNavigation("TopUp") },
+        onClick = { onNavigation(text) },
         colors = ButtonDefaults.buttonColors(containerColor = color)
     ) {
         Text(text = text)

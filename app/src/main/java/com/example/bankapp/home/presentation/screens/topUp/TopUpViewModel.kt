@@ -31,6 +31,7 @@ class TopUpViewModel(
             is TopUpIntent.SelectMethod -> _state.update { it.copy(selectedMethod = intent.method) }
             is TopUpIntent.ChooseAmount -> _state.update { it.copy(chosenAmount = intent.amount) }
             is TopUpIntent.ConfirmIfWorks -> _state.update { it.copy(ifWorks = intent.ifWorks) }
+            is TopUpIntent.SelectScreen -> _state.update { it.copy(chosenScreen = intent.screen) }
         }
     }
 
