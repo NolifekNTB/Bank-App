@@ -48,7 +48,7 @@ fun ThirdTopUpScreen(topUpViewModel: TopUpViewModel, onNavigate: (String) -> Uni
                 topUpViewModel.handleContinueButtonClick()
             }
             Spacer(modifier = Modifier.height(16.dp))
-            ChangeAmountButton(){ onNavigate("") }
+            ChangeAmountButton(){ onNavigate("back") }
         }
     }
 }
@@ -176,14 +176,14 @@ fun PaymentMethodCard(selectedMethod: String, imageResource: Int) {
 }
 
 @Composable
-fun ChangeAmountButton(onNavigate: () -> Unit) {
+fun ChangeAmountButton(onNavigate: (String) -> Unit) {
     Text(
         text = "Change Amount",
         fontSize = 16.sp,
         color = Color.Blue,
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { onNavigate() }
+            .clickable { onNavigate("back") }
             .padding(16.dp),
         textAlign = TextAlign.Center
     )
