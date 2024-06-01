@@ -42,7 +42,6 @@ fun AppNavigation() {
     val navController = rememberNavController()
     val viewState by authViewModel.viewState.collectAsState()
     val auth by inject<FirebaseAuth>()
-    val topUpViewModel: TopUpViewModel = getViewModel()
 
     val startDestination = if (viewState is AuthViewState.Success) "homeGraph" else "login"
 
@@ -51,7 +50,7 @@ fun AppNavigation() {
             if (viewState is AuthViewState.Success) BottomNavigationBar(navController)
         }
     ) { innerPadding ->
-        NavigationHost(navController, startDestination, innerPadding, authViewModel, auth, topUpViewModel)
+        NavigationHost(navController, startDestination, innerPadding, authViewModel, auth)
     }
 }
 
@@ -62,7 +61,6 @@ fun NavigationHost(
     innerPadding: PaddingValues,
     authViewModel: AuthViewModel,
     auth: FirebaseAuth,
-    topUpViewModel: TopUpViewModel
 ) {
     NavHost(
         navController = navController,
@@ -70,7 +68,7 @@ fun NavigationHost(
         modifier = Modifier.padding(innerPadding)
     ) {
         composable("login") { LoginScreen(navController, authViewModel) }
-        homeNavGraph(auth = auth, navController = navController, topUpViewModel = topUpViewModel)
+        homeNavGraph(auth = auth, navController = navController)
         composable("history") { HistoryScreen() }
         composable("pay") { PayScreen() }
         composable("card") { CardScreen() }
