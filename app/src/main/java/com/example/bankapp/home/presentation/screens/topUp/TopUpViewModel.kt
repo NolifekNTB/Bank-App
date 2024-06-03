@@ -32,7 +32,7 @@ class TopUpViewModel(
     }
 
     //TODO: to state
-    fun getPaymentMethodIcon(): Int {
+    fun getPaymentMethodOrPersonIcon(): Int {
         val selectedMethod = _state.value.selectedMethodOrPerson
 
         return when (selectedMethod) {
@@ -42,6 +42,9 @@ class TopUpViewModel(
             "Other E-Payment" -> R.drawable.ic_other_payment
             "Mastercard" -> R.drawable.ic_mastercard
             "Union Pay" -> R.drawable.ic_unionpay
+            "Mike Mentzer" -> R.drawable.pictureprofile1
+            "Mia Khalifa" -> R.drawable.pictureprofile2
+            "Michael Scott" -> R.drawable.pictureprofile3
             else -> R.drawable.ic_google_pay
         }
     }

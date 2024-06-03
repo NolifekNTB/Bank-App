@@ -51,7 +51,7 @@ fun ThirdTopUpScreen(topUpViewModel: TopUpViewModel, onNavigate: (String) -> Uni
 
 @Composable
 fun ConfirmationSection(topUpViewModel: TopUpViewModel) {
-    val imageResource = topUpViewModel.getPaymentMethodIcon()
+    val imageResource = topUpViewModel.getPaymentMethodOrPersonIcon()
     val state = topUpViewModel.state.collectAsState()
     val chosenAmount = state.value.chosenAmount ?: 0f
     val selectedMethod = state.value.selectedMethodOrPerson ?: ""

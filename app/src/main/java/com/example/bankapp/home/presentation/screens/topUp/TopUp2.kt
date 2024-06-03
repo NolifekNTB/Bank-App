@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.bankapp.R
 import com.example.bankapp.home.presentation.screens.topUp.mvi.TopUpIntent
+import com.example.bankapp.home.presentation.screens.topUp.mvi.TopUpState
 
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
@@ -53,8 +54,7 @@ fun SecondTopUpScreen(topUpViewModel: TopUpViewModel, onNavigate: (String) -> Un
 
 @Composable
 fun TopUpScreenContent(topUpViewModel: TopUpViewModel, onNavigate: () -> Unit) {
-    val state = topUpViewModel.state.collectAsState()
-    val selectedMethod = state.value.selectedMethodOrPerson ?: ""
+    val state = topUpViewModel.state.collectAsState().value
 
     Column(
         modifier = Modifier
@@ -64,9 +64,9 @@ fun TopUpScreenContent(topUpViewModel: TopUpViewModel, onNavigate: () -> Unit) {
     ) {
         BalanceSection()
         Spacer(modifier = Modifier.height(16.dp))
-        AmountSection(topUpViewModel = topUpViewModel)
+        AmountSection(topUpViewModel = topUpViewModel, state = state)
         Spacer(modifier = Modifier.height(16.dp))
-        PaymentMethodSection(selectedMethod)
+        PaymentMethodSection(topUpViewModel, state)
         Spacer(modifier = Modifier.weight(1f))
         ContinueButton(topUpViewModel = topUpViewModel){ onNavigate() }
     }
@@ -107,7 +107,7 @@ fun BalanceSection() {
 }
 
 @Composable
-fun AmountSection(topUpViewModel: TopUpViewModel) {
+fun AmountSection(topUpViewModel: TopUpViewModel, state: TopUpState) {
     val amounts = listOf(10.00f, 50.00f, 100.00f)
     var selectedAmount by remember { mutableFloatStateOf(amounts[1]) }
 
@@ -123,7 +123,7 @@ fun AmountSection(topUpViewModel: TopUpViewModel) {
             fontWeight = FontWeight.Bold
         )
         Text(
-            text = "How much would you like to top up?",
+            text = "How much would you like to ${state.chosenScreen}?",
             fontSize = 14.sp,
             color = Color.Gray,
             modifier = Modifier.padding(top = 8.dp, bottom = 16.dp)
@@ -163,17 +163,7 @@ fun AmountOption(amount: Float, isSelected: Boolean, onAmountSelected: () -> Uni
 }
 
 @Composable
-fun PaymentMethodSection(selectedMethod: String) {
-    val image = when (selectedMethod){
-        "PayPal" -> R.drawable.ic_paypal
-        "Google Pay" -> R.drawable.ic_google_pay
-        "Trustly" -> R.drawable.ic_trustly
-        "Other E-Payment" -> R.drawable.ic_other_payment
-        "MasterCard" -> R.drawable.ic_mastercard
-        "Union Pay" -> R.drawable.ic_unionpay
-        else -> R.drawable.ic_paypal
-    }
-
+fun PaymentMethodSection(topUpViewModel: TopUpViewModel, state: TopUpState) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -181,17 +171,21 @@ fun PaymentMethodSection(selectedMethod: String) {
             .padding(16.dp)
     ) {
         Text(
-            text = "Top up method",
+            text = "${state.chosenScreen} method",
             fontSize = 16.sp,
             fontWeight = FontWeight.Bold,
             modifier = Modifier.padding(bottom = 8.dp)
         )
-        PaymentMethodCard(image, selectedMethod)
+        PaymentMethodCard(topUpViewModel)
     }
 }
 
 @Composable
-fun PaymentMethodCard(image: Int, selectedMethod: String) {
+fun PaymentMethodCard(topUpViewModel: TopUpViewModel) {
+    val state = topUpViewModel.state.collectAsState().value
+    val selectedMethod = state.selectedMethodOrPerson ?: ""
+    val imageResource = topUpViewModel.getPaymentMethodOrPersonIcon()
+
     Card(
         shape = RoundedCornerShape(8.dp),
         modifier = Modifier
@@ -205,7 +199,7 @@ fun PaymentMethodCard(image: Int, selectedMethod: String) {
             modifier = Modifier.padding(16.dp)
         ) {
             Image(
-                painter = painterResource(id = image),
+                painter = painterResource(id = imageResource),
                 contentDescription = "MasterCard",
                 modifier = Modifier.size(24.dp)
             )
@@ -223,7 +217,7 @@ fun PaymentMethodCard(image: Int, selectedMethod: String) {
 fun ContinueButton(topUpViewModel: TopUpViewModel, onNavigate: (String) -> Unit) {
     val state = topUpViewModel.state.collectAsState()
     val ifWorks = state.value.ifWorks
-    
+
     Button(
         onClick = {
             if(ifWorks == true) onNavigate("")

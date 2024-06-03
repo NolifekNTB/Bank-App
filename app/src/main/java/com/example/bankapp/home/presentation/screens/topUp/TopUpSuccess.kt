@@ -160,7 +160,7 @@ fun SummaryRow(label: String, value: String, fontWeight: FontWeight = FontWeight
 
 @Composable
 fun PaymentMethod(topUpViewModel: TopUpViewModel, selectedMethod: String?) {
-    val image = topUpViewModel.getPaymentMethodIcon()
+    val image = topUpViewModel.getPaymentMethodOrPersonIcon()
 
     Row(
         modifier = Modifier
