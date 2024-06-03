@@ -20,7 +20,6 @@ import androidx.compose.material.icons.filled.Error
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.zIndex
-import com.google.protobuf.Internal.BooleanList
 
 
 @Composable
@@ -66,7 +65,7 @@ fun SuccessContent(topUpViewModel: TopUpViewModel) {
 
     val ifWorks = state.value.ifWorks
     val chosenAmount = state.value.chosenAmount
-    val selectedMethod = state.value.selectedMethod
+    val selectedMethod = state.value.selectedMethodOrPerson
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,

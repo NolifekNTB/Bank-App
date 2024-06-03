@@ -25,7 +25,11 @@ import com.example.bankapp.home.presentation.screens.topUp.mvi.TopUpIntent
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
-fun TopUpScreen(topUpViewModel: TopUpViewModel, onNavigate: (String) -> Unit) {
+fun TopUpScreen(topUpViewModel: TopUpViewModel, whichScreen: String, onNavigate: (String) -> Unit) {
+    LaunchedEffect(key1 = whichScreen) {
+        topUpViewModel.handleIntent(TopUpIntent.SelectScreen(whichScreen))
+    }
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -48,62 +52,62 @@ fun TopUpScreen(topUpViewModel: TopUpViewModel, onNavigate: (String) -> Unit) {
 
 @Composable
 fun TopUpContent(topUpViewModel: TopUpViewModel, onNavigate: () -> Unit) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color(0xFFEDEFF3))
-            .padding(16.dp)
-    ) {
-        Text(
-            text = "Top Up The Account",
-            fontSize = 24.sp,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(bottom = 8.dp)
-        )
-        Text(
-            text = "Choose your preferred method",
-            fontSize = 16.sp,
-            color = Color.Gray,
-            modifier = Modifier.padding(bottom = 16.dp)
-        )
+    val state = topUpViewModel.state.collectAsState().value
+    val titles = state.titles
+    val drawableList = state.drawables
+    val textList = state.texts
+
+    topUpViewModel.titlesDrawablesTexts()
+
+    if (titles.isNotEmpty() && drawableList.isNotEmpty() && textList.isNotEmpty()) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color(0xFFEDEFF3))
+                .padding(16.dp)
+        ) {
+            Text(
+                text = "Top Up The Account",
+                fontSize = 24.sp,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.padding(bottom = 8.dp)
+            )
+            Text(
+                text = "Choose your preferred method",
+                fontSize = 16.sp,
+                color = Color.Gray,
+                modifier = Modifier.padding(bottom = 16.dp)
+            )
 
 
-        //TODO
-        val drawableList = listOf(
-            R.drawable.ic_paypal, R.drawable.ic_google_pay,
-            R.drawable.ic_trustly, R.drawable.ic_other_payment
-        )
-        val textList = listOf(
-            "PayPal", "Google Pay", "Trustly", "Other E-Payment"
-        )
+            PaymentOptionSection(titles[0]) {
+                repeat(drawableList[0].size) { index ->
+                    PaymentOption(
+                        icon = drawableList[0][index],
+                        text = textList[0][index]
+                    ) { method ->
+                        topUpViewModel.handleIntent(TopUpIntent.SelectMethod(method))
+                        onNavigate()
+                    }
+                }
+            }
 
-        PaymentOptionSection(title = "E-Payment") {
-            repeat(drawableList.size){ index ->
-                PaymentOption(icon = drawableList[index], text = textList[index]) { method ->
-                    topUpViewModel.handleIntent(TopUpIntent.SelectMethod(method))
-                    onNavigate()
+            Spacer(modifier = Modifier.height(16.dp))
+
+            PaymentOptionSection(titles[1]) {
+                repeat(drawableList[1].size) { index ->
+                    PaymentOption(
+                        icon = drawableList[1][index],
+                        text = textList[1][index]
+                    ) { method ->
+                        topUpViewModel.handleIntent(TopUpIntent.SelectMethod(method))
+                        onNavigate()
+                    }
                 }
             }
         }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        val drawableList2 = listOf(
-            R.drawable.ic_mastercard, R.drawable.ic_unionpay
-        )
-
-        val textList2 = listOf(
-            "MasterCard", "Union Pay"
-        )
-
-        PaymentOptionSection(title = "Credit Card") {
-            repeat(drawableList2.size){
-                PaymentOption(icon = drawableList2[it], text = textList2[it]){ method ->
-                    topUpViewModel.handleIntent(TopUpIntent.SelectMethod(method))
-                    onNavigate()
-                }
-            }
-        }
+    } else {
+        CircularProgressIndicator()
     }
 }
 

@@ -5,7 +5,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.example.bankapp.home.presentation.HomeScreen
-import com.example.bankapp.home.presentation.screens.topUp.TopUpViewModel
 import com.google.firebase.auth.FirebaseAuth
 
 private object RoutesHome {
@@ -23,13 +22,11 @@ fun NavGraphBuilder.homeNavGraph(
     ){
         composable(route = RoutesHome.HOME) {
             HomeScreen(auth = auth, onNavigation = { route ->
-                navController.navigate(route)
+                navController.navigate("TopUpGraph/$route")
             })
         }
 
-        topUpNavGraph(navController = navController)
-
-        transferNavGraph(navController = navController)
+        TopUpTransferWithdraw(navController = navController)
     }
 }
 

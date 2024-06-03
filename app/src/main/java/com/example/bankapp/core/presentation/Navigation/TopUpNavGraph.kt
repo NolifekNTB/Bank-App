@@ -6,7 +6,9 @@ import androidx.lifecycle.ViewModel
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 import androidx.navigation.navigation
 import com.example.bankapp.home.presentation.screens.topUp.SecondTopUpScreen
 import com.example.bankapp.home.presentation.screens.topUp.ThirdTopUpScreen
@@ -15,25 +17,29 @@ import com.example.bankapp.home.presentation.screens.topUp.TopUpSuccessScreen
 import com.example.bankapp.home.presentation.screens.topUp.TopUpViewModel
 import org.koin.androidx.compose.getViewModel
 
-private object RoutesTopUp {
-    const val TOP_UP_GRAPH = "TopUpGraph"
-    const val TOP_UP = "TopUp"
+object RoutesTopUp {
+    const val TOP_UP_GRAPH = "TopUpGraph/{route}"
+    const val TOP_UP = "TopUp/{route}"
     const val TOP_UP2 = "topUp2"
     const val TOP_UP3 = "topUp3"
     const val TOP_UP4 = "topUp4"
 }
 
-fun NavGraphBuilder.topUpNavGraph(
-    navController: NavHostController
+fun NavGraphBuilder.TopUpTransferWithdraw(
+    navController: NavHostController,
 ) {
     navigation(
         route = RoutesTopUp.TOP_UP_GRAPH,
         startDestination = RoutesTopUp.TOP_UP
     ) {
-        composable(route = RoutesTopUp.TOP_UP) { entry ->
+        composable(
+            route = RoutesTopUp.TOP_UP,
+            arguments = listOf(navArgument("route") { type = NavType.StringType })
+        ) { entry ->
+            val route = entry.arguments?.getString("route") ?: ""
             val topUpViewModel = entry.sharedViewModelSearch<TopUpViewModel>(navController, RoutesTopUp.TOP_UP_GRAPH)
 
-            TopUpScreen(topUpViewModel = topUpViewModel) { backOrGo ->
+            TopUpScreen(topUpViewModel = topUpViewModel, whichScreen = route) { backOrGo ->
                 if (backOrGo == "back") navController.popBackStack()
                 else navController.navigate(RoutesTopUp.TOP_UP2)
             }

@@ -12,7 +12,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -21,9 +20,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.bankapp.R
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
@@ -58,7 +54,7 @@ fun ConfirmationSection(topUpViewModel: TopUpViewModel) {
     val imageResource = topUpViewModel.getPaymentMethodIcon()
     val state = topUpViewModel.state.collectAsState()
     val chosenAmount = state.value.chosenAmount ?: 0f
-    val selectedMethod = state.value.selectedMethod ?: ""
+    val selectedMethod = state.value.selectedMethodOrPerson ?: ""
 
     Column(
         modifier = Modifier

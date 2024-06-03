@@ -11,12 +11,9 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -57,7 +54,7 @@ fun SecondTopUpScreen(topUpViewModel: TopUpViewModel, onNavigate: (String) -> Un
 @Composable
 fun TopUpScreenContent(topUpViewModel: TopUpViewModel, onNavigate: () -> Unit) {
     val state = topUpViewModel.state.collectAsState()
-    val selectedMethod = state.value.selectedMethod ?: ""
+    val selectedMethod = state.value.selectedMethodOrPerson ?: ""
 
     Column(
         modifier = Modifier
