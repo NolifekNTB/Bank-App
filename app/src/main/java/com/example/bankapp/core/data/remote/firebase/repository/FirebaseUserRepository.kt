@@ -10,4 +10,5 @@ interface FirebaseUserRepository {
     suspend fun fetchProfiles(): List<FriendFireStore>
     suspend fun addTransaction(transaction: LastTransactionsFireStore, userID: String)
     suspend fun changeAccountBalance(userID: String, amount: Double)
+    suspend fun transferMoney(fromUser: String, toUser: String, amount: Double)
 }

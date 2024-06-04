@@ -60,4 +60,44 @@ class FirebaseUserRepositoryImpl(private val db: FirebaseFirestore): FirebaseUse
             transaction.update(userRef, "balance", newBalance)
         }.await()
     }
+
+    override suspend fun transferMoney(fromUser: String, toUser: String, amount: Double) {
+        val db = FirebaseFirestore.getInstance()
+        val fromUserRef = db.collection("users").document(fromUser)
+        val toUserRef = db.collection("users").document(toUser)
+
+        db.runTransaction { transaction ->
+            val fromSnapshot = transaction.get(fromUserRef)
+            val toSnapshot = transaction.get(toUserRef)
+            val fromCurrentBalance = fromSnapshot.getDouble("balance") ?: 0.0
+            val toCurrentBalance = toSnapshot.getDouble("balance") ?: 0.0
+
+            if (fromCurrentBalance < amount) {
+                throw Exception("Insufficient balance")
+            }
+
+            val fromNewBalance = fromCurrentBalance - amount
+            val toNewBalance = toCurrentBalance + amount
+
+            transaction.update(fromUserRef, "balance", fromNewBalance)
+            transaction.update(toUserRef, "balance", toNewBalance)
+        }.await()
+    }
+
+    suspend fun getUserIDByName(name: String): String? {
+        return try {
+            val users = db.collection("users")
+                .whereEqualTo("name", name)
+                .get()
+                .await()
+            if (users.documents.isNotEmpty()) {
+                users.documents[0].id
+            } else {
+                null
+            }
+        } catch (e: Exception) {
+            Log.e("FirebaseUserRepositoryImpl", "Error getting user ID by name", e)
+            null
+        }
+    }
 }

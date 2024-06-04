@@ -20,11 +20,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.bankapp.home.presentation.screens.topUp.mvi.TopUpState
 
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun ThirdTopUpScreen(topUpViewModel: TopUpViewModel, onNavigate: (String) -> Unit) {
+    val state = topUpViewModel.state.collectAsState().value
+    val screen = state.chosenScreen
+
     Scaffold(
         topBar = {
             TopUpAppBar(){ onNavigate("back") }
@@ -41,7 +45,8 @@ fun ThirdTopUpScreen(topUpViewModel: TopUpViewModel, onNavigate: (String) -> Uni
             Spacer(modifier = Modifier.weight(1f))
             ContinueButton3() { route ->
                 onNavigate(route)
-                topUpViewModel.handleContinueButtonClick()
+                if (screen == "Transfer") topUpViewModel.handleContinueButtonClick(state.selectedMethodOrPerson!!)
+                else topUpViewModel.handleContinueButtonClick()
             }
             Spacer(modifier = Modifier.height(16.dp))
             ChangeAmountButton(){ onNavigate("back") }
@@ -52,9 +57,9 @@ fun ThirdTopUpScreen(topUpViewModel: TopUpViewModel, onNavigate: (String) -> Uni
 @Composable
 fun ConfirmationSection(topUpViewModel: TopUpViewModel) {
     val imageResource = topUpViewModel.getPaymentMethodOrPersonIcon()
-    val state = topUpViewModel.state.collectAsState()
-    val chosenAmount = state.value.chosenAmount ?: 0f
-    val selectedMethod = state.value.selectedMethodOrPerson ?: ""
+    val state = topUpViewModel.state.collectAsState().value
+    val chosenAmount = state.chosenAmount ?: 0f
+    val selectedMethod = state.selectedMethodOrPerson ?: ""
 
     Column(
         modifier = Modifier
@@ -62,7 +67,7 @@ fun ConfirmationSection(topUpViewModel: TopUpViewModel) {
             .background(Color.White, RoundedCornerShape(16.dp))
             .padding(16.dp)
     ) {
-        ConfirmationHeader()
+        ConfirmationHeader(state)
         ConfirmationAmount(chosenAmount)
         Divider()
         Spacer(modifier = Modifier.height(16.dp))
@@ -75,7 +80,7 @@ fun ConfirmationSection(topUpViewModel: TopUpViewModel) {
 }
 
 @Composable
-fun ConfirmationHeader() {
+fun ConfirmationHeader(state: TopUpState) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier.padding(bottom = 16.dp)
@@ -90,7 +95,7 @@ fun ConfirmationHeader() {
         )
         Spacer(modifier = Modifier.width(8.dp))
         Text(
-            text = "Top up Money",
+            text = "${state.chosenScreen} Money",
             fontSize = 18.sp,
             fontWeight = FontWeight.Bold
         )

@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.bankapp.R
 import com.example.bankapp.home.presentation.screens.topUp.mvi.TopUpIntent
+import com.example.bankapp.home.presentation.screens.topUp.mvi.TopUpState
 
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
@@ -67,18 +68,17 @@ fun TopUpContent(topUpViewModel: TopUpViewModel, onNavigate: () -> Unit) {
                 .padding(16.dp)
         ) {
             Text(
-                text = "Top Up The Account",
+                text = if(state.chosenScreen == "Transfer") "Transfer Money" else "Top Up The Account",
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.padding(bottom = 8.dp)
             )
             Text(
-                text = "Choose your preferred method",
+                text = if(state.chosenScreen == "Transfer") "Choose your preferred person" else "Choose your preferred method",
                 fontSize = 16.sp,
                 color = Color.Gray,
                 modifier = Modifier.padding(bottom = 16.dp)
             )
-
 
             PaymentOptionSection(titles[0]) {
                 repeat(drawableList[0].size) { index ->
@@ -86,8 +86,10 @@ fun TopUpContent(topUpViewModel: TopUpViewModel, onNavigate: () -> Unit) {
                         icon = drawableList[0][index],
                         text = textList[0][index]
                     ) { method ->
-                        topUpViewModel.handleIntent(TopUpIntent.SelectMethod(method))
-                        onNavigate()
+                        if(state.chosenScreen != "Transfer") {
+                            topUpViewModel.handleIntent(TopUpIntent.SelectMethod(method))
+                            onNavigate()
+                        }
                     }
                 }
             }

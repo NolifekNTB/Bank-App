@@ -1,5 +1,6 @@
 package com.example.bankapp.home.presentation.screens.topUp
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.bankapp.R
@@ -80,8 +81,8 @@ class TopUpViewModel(
                     listOf("Add New Bank Account",
                         "Add New Credit Card"),
                     listOf("Mike Mentzer",
-                        "Mia Khalifa",
-                        "Michael Scott")
+                        "John Doe",
+                        "John Cena")
                 )
             }
             "Widthdraw" -> {
@@ -95,13 +96,41 @@ class TopUpViewModel(
         }
     }
 
-    fun handleContinueButtonClick() {
+    fun fetchUserIDByName(name: String, onResult: (String?) -> Unit) {
+        viewModelScope.launch {
+            topUpUseCase.fetchUserIDByName(name) { userId ->
+                onResult(userId)
+            }
+        }
+    }
+
+    fun handleContinueButtonClick(name: String = "") {
         val chosenAmount = _state.value.chosenAmount ?: 0f
 
-        viewModelScope.launch {
-            topUpUseCase.updateUserAccount(chosenAmount.toDouble()) { success ->
-                if (success) {
-                    handleIntent(TopUpIntent.ConfirmIfWorks(true))
+        if(_state.value.chosenScreen == "TopUp") {
+            viewModelScope.launch {
+                topUpUseCase.updateUserAccount(chosenAmount.toDouble()) { success ->
+                    if (success) {
+                        handleIntent(TopUpIntent.ConfirmIfWorks(true))
+                    } else {
+                        handleIntent(TopUpIntent.ConfirmIfWorks(false))
+                    }
+                }
+            }
+        }  else if (_state.value.chosenScreen == "Transfer") {
+            fetchUserIDByName(name) { toUserID ->
+                if(toUserID != null) {
+                    viewModelScope.launch {
+                        topUpUseCase.transferMoney(toUserID = toUserID, amount = chosenAmount.toDouble()) { success ->
+                            if (success) {
+                                handleIntent(TopUpIntent.ConfirmIfWorks(true))
+                                Log.d("testowanie", "IfWorks: ${_state.value.ifWorks}")
+                            } else {
+                                handleIntent(TopUpIntent.ConfirmIfWorks(false))
+                                Log.d("testowanie", "Ifworks: ${_state.value.ifWorks}")
+                            }
+                        }
+                    }
                 } else {
                     handleIntent(TopUpIntent.ConfirmIfWorks(false))
                 }

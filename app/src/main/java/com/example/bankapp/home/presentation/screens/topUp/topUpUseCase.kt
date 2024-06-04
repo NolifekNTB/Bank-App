@@ -19,4 +19,25 @@ class TopUpUseCase(
             onResult(false)
         }
     }
+
+    suspend fun fetchUserIDByName(name: String, onResult: (String?) -> Unit) {
+        try {
+            val userId = repoFirebase.getUserIDByName(name)
+            onResult(userId)
+        } catch (e: Exception) {
+            Log.e("TopUpUseCase", "Error fetching user ID by name", e)
+            onResult(null)
+        }
+    }
+
+    suspend fun transferMoney(toUserID: String, amount: Double, onResult: (Boolean) -> Unit) {
+        val fromUser = userID.toString()
+        try {
+            repoFirebase.transferMoney(fromUser = fromUser, toUserID, amount)
+            onResult(true)
+        } catch (e: Exception) {
+            Log.e("testowanie", "Error transferring money", e)
+            onResult(false)
+        }
+    }
 }
