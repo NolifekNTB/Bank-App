@@ -1,4 +1,4 @@
-package com.example.bankapp.home.presentation.mvi
+package com.example.bankapp.home.presentation.home.mvi
 
 import com.example.bankapp.core.data.remote.firebase.model.LastTransactionsFireStore
 

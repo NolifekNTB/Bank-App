@@ -1,4 +1,4 @@
-package com.example.bankapp.home.presentation.screens.topUp
+package com.example.bankapp.home.presentation.Transactions
 
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton

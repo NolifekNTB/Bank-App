@@ -1,4 +1,4 @@
-package com.example.bankapp.home.presentation.screens.topUp
+package com.example.bankapp.home.presentation.Transactions.screens
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
@@ -23,14 +23,14 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.bankapp.R
-import com.example.bankapp.home.presentation.screens.topUp.mvi.TopUpIntent
-import com.example.bankapp.home.presentation.screens.topUp.mvi.TopUpState
+import com.example.bankapp.home.presentation.Transactions.TransactionsViewModel
+import com.example.bankapp.home.presentation.Transactions.mvi.TransactionsIntent
+import com.example.bankapp.home.presentation.Transactions.mvi.TransactionsState
 
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
-fun SecondTopUpScreen(topUpViewModel: TopUpViewModel, onNavigate: (String) -> Unit) {
+fun TransactionsSecond(transactionsViewModel: TransactionsViewModel, onNavigate: (String) -> Unit) {
     Scaffold(
         topBar = {
             TopAppBar(
@@ -47,14 +47,14 @@ fun SecondTopUpScreen(topUpViewModel: TopUpViewModel, onNavigate: (String) -> Un
             )
         }
     ) {
-        TopUpScreenContent(topUpViewModel) { onNavigate("") }
+        TopUpScreenContent(transactionsViewModel) { onNavigate("") }
 
     }
 }
 
 @Composable
-fun TopUpScreenContent(topUpViewModel: TopUpViewModel, onNavigate: () -> Unit) {
-    val state = topUpViewModel.state.collectAsState().value
+fun TopUpScreenContent(transactionsViewModel: TransactionsViewModel, onNavigate: () -> Unit) {
+    val state = transactionsViewModel.state.collectAsState().value
 
     Column(
         modifier = Modifier
@@ -64,11 +64,11 @@ fun TopUpScreenContent(topUpViewModel: TopUpViewModel, onNavigate: () -> Unit) {
     ) {
         BalanceSection()
         Spacer(modifier = Modifier.height(16.dp))
-        AmountSection(topUpViewModel = topUpViewModel, state = state)
+        AmountSection(transactionsViewModel = transactionsViewModel, state = state)
         Spacer(modifier = Modifier.height(16.dp))
-        PaymentMethodSection(topUpViewModel, state)
+        PaymentMethodSection(transactionsViewModel, state)
         Spacer(modifier = Modifier.weight(1f))
-        ContinueButton(topUpViewModel = topUpViewModel){ onNavigate() }
+        ContinueButton(transactionsViewModel = transactionsViewModel){ onNavigate() }
     }
 }
 
@@ -107,7 +107,7 @@ fun BalanceSection() {
 }
 
 @Composable
-fun AmountSection(topUpViewModel: TopUpViewModel, state: TopUpState) {
+fun AmountSection(transactionsViewModel: TransactionsViewModel, state: TransactionsState) {
     val amounts = listOf(10.00f, 50.00f, 100.00f)
     var selectedAmount by remember { mutableFloatStateOf(amounts[1]) }
 
@@ -141,7 +141,7 @@ fun AmountSection(topUpViewModel: TopUpViewModel, state: TopUpState) {
             amounts.forEach { amount ->
                 AmountOption(amount = amount, isSelected = amount == selectedAmount) {
                     selectedAmount = amount
-                    topUpViewModel.handleIntent(TopUpIntent.ChooseAmount(selectedAmount))
+                    transactionsViewModel.handleIntent(TransactionsIntent.ChooseAmount(selectedAmount))
                 }
             }
         }
@@ -163,7 +163,7 @@ fun AmountOption(amount: Float, isSelected: Boolean, onAmountSelected: () -> Uni
 }
 
 @Composable
-fun PaymentMethodSection(topUpViewModel: TopUpViewModel, state: TopUpState) {
+fun PaymentMethodSection(transactionsViewModel: TransactionsViewModel, state: TransactionsState) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -176,15 +176,15 @@ fun PaymentMethodSection(topUpViewModel: TopUpViewModel, state: TopUpState) {
             fontWeight = FontWeight.Bold,
             modifier = Modifier.padding(bottom = 8.dp)
         )
-        PaymentMethodCard(topUpViewModel)
+        PaymentMethodCard(transactionsViewModel)
     }
 }
 
 @Composable
-fun PaymentMethodCard(topUpViewModel: TopUpViewModel) {
-    val state = topUpViewModel.state.collectAsState().value
+fun PaymentMethodCard(transactionsViewModel: TransactionsViewModel) {
+    val state = transactionsViewModel.state.collectAsState().value
     val selectedMethod = state.selectedMethodOrPerson ?: ""
-    val imageResource = topUpViewModel.getPaymentMethodOrPersonIcon()
+    val imageResource = transactionsViewModel.getIconForSelectedMethodOrPerson()
 
     Card(
         shape = RoundedCornerShape(8.dp),
@@ -214,8 +214,8 @@ fun PaymentMethodCard(topUpViewModel: TopUpViewModel) {
 }
 
 @Composable
-fun ContinueButton(topUpViewModel: TopUpViewModel, onNavigate: (String) -> Unit) {
-    val state = topUpViewModel.state.collectAsState()
+fun ContinueButton(transactionsViewModel: TransactionsViewModel, onNavigate: (String) -> Unit) {
+    val state = transactionsViewModel.state.collectAsState()
     val ifWorks = state.value.ifWorks
 
     Button(

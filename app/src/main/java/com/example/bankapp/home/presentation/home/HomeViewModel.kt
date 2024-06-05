@@ -1,15 +1,13 @@
-package com.example.bankapp.home.presentation
+package com.example.bankapp.home.presentation.home
 
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.bankapp.core.data.remote.firebase.model.LastTransactionsFireStore
-import com.example.bankapp.auth.data.repository.FirebaseUserRepositoryImpl
 import com.example.bankapp.home.data.repository.LastTransactionsImpl
 import com.example.bankapp.home.domain.HomeUseCase
-import com.example.bankapp.home.presentation.mvi.ViewIntent
-import com.example.bankapp.home.presentation.mvi.ViewState
+import com.example.bankapp.home.presentation.home.mvi.ViewIntent
+import com.example.bankapp.home.presentation.home.mvi.ViewState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow

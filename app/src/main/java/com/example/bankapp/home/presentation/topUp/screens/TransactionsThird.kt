@@ -1,4 +1,4 @@
-package com.example.bankapp.home.presentation.screens.topUp
+package com.example.bankapp.home.presentation.Transactions.screens
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
@@ -20,13 +20,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.bankapp.home.presentation.screens.topUp.mvi.TopUpState
+import com.example.bankapp.home.presentation.Transactions.TopUpAppBar
+import com.example.bankapp.home.presentation.Transactions.TransactionsViewModel
+import com.example.bankapp.home.presentation.Transactions.mvi.TransactionsState
 
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
-fun ThirdTopUpScreen(topUpViewModel: TopUpViewModel, onNavigate: (String) -> Unit) {
-    val state = topUpViewModel.state.collectAsState().value
+fun TransactionsThird(transactionsViewModel: TransactionsViewModel, onNavigate: (String) -> Unit) {
+    val state = transactionsViewModel.state.collectAsState().value
     val screen = state.chosenScreen
 
     Scaffold(
@@ -41,12 +43,12 @@ fun ThirdTopUpScreen(topUpViewModel: TopUpViewModel, onNavigate: (String) -> Uni
                 .padding(16.dp) 
         ) {
             Spacer(modifier = Modifier.height(16.dp))
-            ConfirmationSection(topUpViewModel = topUpViewModel)
+            ConfirmationSection(transactionsViewModel = transactionsViewModel)
             Spacer(modifier = Modifier.weight(1f))
             ContinueButton3() { route ->
                 onNavigate(route)
-                if (screen == "Transfer") topUpViewModel.handleContinueButtonClick(state.selectedMethodOrPerson!!)
-                else topUpViewModel.handleContinueButtonClick()
+                if (screen == "Transfer") transactionsViewModel.handleContinueButtonClick(state.selectedMethodOrPerson!!)
+                else transactionsViewModel.handleContinueButtonClick()
             }
             Spacer(modifier = Modifier.height(16.dp))
             ChangeAmountButton(){ onNavigate("back") }
@@ -55,9 +57,9 @@ fun ThirdTopUpScreen(topUpViewModel: TopUpViewModel, onNavigate: (String) -> Uni
 }
 
 @Composable
-fun ConfirmationSection(topUpViewModel: TopUpViewModel) {
-    val imageResource = topUpViewModel.getPaymentMethodOrPersonIcon()
-    val state = topUpViewModel.state.collectAsState().value
+fun ConfirmationSection(transactionsViewModel: TransactionsViewModel) {
+    val imageResource = transactionsViewModel.getIconForSelectedMethodOrPerson()
+    val state = transactionsViewModel.state.collectAsState().value
     val chosenAmount = state.chosenAmount ?: 0f
     val selectedMethod = state.selectedMethodOrPerson ?: ""
 
@@ -80,7 +82,7 @@ fun ConfirmationSection(topUpViewModel: TopUpViewModel) {
 }
 
 @Composable
-fun ConfirmationHeader(state: TopUpState) {
+fun ConfirmationHeader(state: TransactionsState) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier.padding(bottom = 16.dp)

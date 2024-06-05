@@ -1,11 +1,12 @@
-package com.example.bankapp.home.presentation.screens.topUp
+package com.example.bankapp.home.domain
 
 import android.util.Log
 import com.example.bankapp.auth.data.repository.FirebaseUserRepositoryImpl
+import com.example.bankapp.core.data.remote.firebase.model.FriendFireStore
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 
-class TopUpUseCase(
+class TransactionsUseCase(
     private val repoFirebase: FirebaseUserRepositoryImpl
 ) {
     private val userID = Firebase.auth.currentUser?.uid
@@ -39,5 +40,10 @@ class TopUpUseCase(
             Log.e("testowanie", "Error transferring money", e)
             onResult(false)
         }
+    }
+
+    suspend fun fetchUsersProfiles(onResult: (List<FriendFireStore>) -> Unit){
+        val users = repoFirebase.fetchProfiles()
+        onResult(users)
     }
 }

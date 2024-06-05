@@ -1,4 +1,4 @@
-package com.example.bankapp.home.presentation
+package com.example.bankapp.home.presentation.home
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -29,10 +29,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.layout.ContentScale
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
-import com.example.bankapp.R
 import com.example.bankapp.core.data.local.realm.model.LastTransactionsRealm
-import com.example.bankapp.home.presentation.mvi.ViewIntent
-import com.example.bankapp.home.presentation.mvi.ViewState
+import com.example.bankapp.home.presentation.home.mvi.ViewIntent
+import com.example.bankapp.home.presentation.home.mvi.ViewState
 import com.example.bankapp.core.data.local.realm.model.FriendRealm
 import com.google.firebase.auth.FirebaseAuth
 import org.koin.androidx.compose.getViewModel
@@ -68,7 +67,7 @@ fun HomeContent(state: ViewState, onNavigation: (String) -> Unit) {
     ) {
         when (state) {
             is ViewState.Loading -> CircularProgressIndicator()
-            is ViewState.DataLoaded -> DataLoadedContent(state){route -> onNavigation(route)}
+            is ViewState.DataLoaded -> DataLoadedContent(state){ route -> onNavigation(route)}
             is ViewState.Error -> ErrorContent(state.exception)
         }
     }

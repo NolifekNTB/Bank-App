@@ -4,7 +4,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
-import com.example.bankapp.home.presentation.HomeScreen
+import com.example.bankapp.home.presentation.home.HomeScreen
 import com.google.firebase.auth.FirebaseAuth
 
 private object RoutesHome {
@@ -26,7 +26,7 @@ fun NavGraphBuilder.homeNavGraph(
             })
         }
 
-        TopUpTransferWithdraw(navController = navController)
+        transactionsNavGraph(navController = navController)
     }
 }
 

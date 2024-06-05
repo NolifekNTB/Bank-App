@@ -28,12 +28,9 @@ import com.example.bankapp.R
 import com.example.bankapp.auth.presentation.AuthViewModel
 import com.example.bankapp.auth.presentation.LoginScreen
 import com.example.bankapp.auth.presentation.mvi.AuthViewState
-import com.example.bankapp.home.presentation.HomeScreen
-import com.example.bankapp.home.presentation.screens.topUp.TopUpViewModel
 import com.google.firebase.auth.FirebaseAuth
 import org.koin.androidx.compose.getViewModel
 import org.koin.androidx.compose.inject
-import org.koin.androidx.compose.koinViewModel
 
 
 @Composable
@@ -46,33 +43,9 @@ fun AppNavigation() {
     val startDestination = if (viewState is AuthViewState.Success) "homeGraph" else "login"
 
     Scaffold(
-        bottomBar = {
-            if (viewState is AuthViewState.Success) BottomNavigationBar(navController)
-        }
+        bottomBar = { if (viewState is AuthViewState.Success) BottomNavigationBar(navController) }
     ) { innerPadding ->
         NavigationHost(navController, startDestination, innerPadding, authViewModel, auth)
-    }
-}
-
-@Composable
-fun NavigationHost(
-    navController: NavHostController,
-    startDestination: String,
-    innerPadding: PaddingValues,
-    authViewModel: AuthViewModel,
-    auth: FirebaseAuth,
-) {
-    NavHost(
-        navController = navController,
-        startDestination = startDestination,
-        modifier = Modifier.padding(innerPadding)
-    ) {
-        composable("login") { LoginScreen(navController, authViewModel) }
-        homeNavGraph(auth = auth, navController = navController)
-        composable("history") { HistoryScreen() }
-        composable("pay") { PayScreen() }
-        composable("card") { CardScreen() }
-        composable("profile") { ProfileScreen() }
     }
 }
 
@@ -104,6 +77,28 @@ fun BottomNavigationBar(navController: NavHostController) {
                 }
             )
         }
+    }
+}
+
+@Composable
+fun NavigationHost(
+    navController: NavHostController,
+    startDestination: String,
+    innerPadding: PaddingValues,
+    authViewModel: AuthViewModel,
+    auth: FirebaseAuth,
+) {
+    NavHost(
+        navController = navController,
+        startDestination = startDestination,
+        modifier = Modifier.padding(innerPadding)
+    ) {
+        composable("login") { LoginScreen(navController, authViewModel) }
+        homeNavGraph(auth = auth, navController = navController)
+        composable("history") { HistoryScreen() }
+        composable("pay") { PayScreen() }
+        composable("card") { CardScreen() }
+        composable("profile") { ProfileScreen() }
     }
 }
 

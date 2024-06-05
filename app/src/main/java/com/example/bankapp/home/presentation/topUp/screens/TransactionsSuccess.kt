@@ -1,4 +1,4 @@
-package com.example.bankapp.home.presentation.screens.topUp
+package com.example.bankapp.home.presentation.Transactions.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -20,11 +20,12 @@ import androidx.compose.material.icons.filled.Error
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.zIndex
+import com.example.bankapp.home.presentation.Transactions.TransactionsViewModel
 
 
 @Composable
-fun TopUpSuccessScreen(
-    topUpViewModel: TopUpViewModel,
+fun TransactionsSuccess(
+    transactionsViewModel: TransactionsViewModel,
     onNavigate: (String) -> Unit)
 {
     Box(
@@ -38,7 +39,7 @@ fun TopUpSuccessScreen(
             .padding(16.dp)
     ) {
         CloseButton(Modifier.align(Alignment.TopStart), onNavigate)
-        SuccessContent(topUpViewModel)
+        SuccessContent(transactionsViewModel)
     }
 }
 
@@ -60,8 +61,8 @@ fun CloseButton(modifier: Modifier, onNavigate: (String) -> Unit) {
 }
 
 @Composable
-fun SuccessContent(topUpViewModel: TopUpViewModel) {
-    val state = topUpViewModel.state.collectAsState()
+fun SuccessContent(transactionsViewModel: TransactionsViewModel) {
+    val state = transactionsViewModel.state.collectAsState()
 
     val ifWorks = state.value.ifWorks
     val chosenAmount = state.value.chosenAmount
@@ -88,7 +89,7 @@ fun SuccessContent(topUpViewModel: TopUpViewModel) {
         Spacer(modifier = Modifier.height(16.dp))
         Divider(color = Color.Gray, thickness = 1.dp)
         Spacer(modifier = Modifier.height(16.dp))
-        PaymentMethod(topUpViewModel = topUpViewModel, selectedMethod = selectedMethod)
+        PaymentMethod(transactionsViewModel = transactionsViewModel, selectedMethod = selectedMethod)
     }
 }
 
@@ -159,8 +160,8 @@ fun SummaryRow(label: String, value: String, fontWeight: FontWeight = FontWeight
 }
 
 @Composable
-fun PaymentMethod(topUpViewModel: TopUpViewModel, selectedMethod: String?) {
-    val image = topUpViewModel.getPaymentMethodOrPersonIcon()
+fun PaymentMethod(transactionsViewModel: TransactionsViewModel, selectedMethod: String?) {
+    val image = transactionsViewModel.getIconForSelectedMethodOrPerson()
 
     Row(
         modifier = Modifier
