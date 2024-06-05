@@ -16,7 +16,7 @@ class TransactionsUseCase(
             repoFirebase.changeAccountBalance(userID.toString(), amount)
             onResult(true)
         } catch (e: Exception) {
-            Log.e("TopUpViewModel", "Error updating user balance", e)
+            Log.e("TransactionsViewModel", "Error updating user balance", e)
             onResult(false)
         }
     }
@@ -26,7 +26,7 @@ class TransactionsUseCase(
             val userId = repoFirebase.getUserIDByName(name)
             onResult(userId)
         } catch (e: Exception) {
-            Log.e("TopUpUseCase", "Error fetching user ID by name", e)
+            Log.e("TransactionsUseCase", "Error fetching user ID by name", e)
             onResult(null)
         }
     }

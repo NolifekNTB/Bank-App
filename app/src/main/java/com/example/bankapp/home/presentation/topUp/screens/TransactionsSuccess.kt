@@ -85,7 +85,7 @@ fun SuccessContent(transactionsViewModel: TransactionsViewModel) {
         Spacer(modifier = Modifier.height(16.dp))
         Divider(color = Color.Gray, thickness = 1.dp)
         Spacer(modifier = Modifier.height(16.dp))
-        TopUpSummary(chosenAmount)
+        TransactionsSummary(chosenAmount)
         Spacer(modifier = Modifier.height(16.dp))
         Divider(color = Color.Gray, thickness = 1.dp)
         Spacer(modifier = Modifier.height(16.dp))
@@ -140,7 +140,7 @@ fun DateAndReference() {
 }
 
 @Composable
-fun TopUpSummary(chosenAmount: Float?) {
+fun TransactionsSummary(chosenAmount: Float?) {
     Column {
         SummaryRow(label = "Amount", value = "$$chosenAmount")
         SummaryRow(label = "Admin Fee", value = "$1.00")

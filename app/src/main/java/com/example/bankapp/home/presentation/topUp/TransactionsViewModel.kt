@@ -59,7 +59,7 @@ class TransactionsViewModel(
 
     private fun loadTitlesDrawablesTexts() {
         val (titles, drawables, texts) = when (_state.value.chosenScreen) {
-            "TopUp" -> Triple(
+            "Transactions" -> Triple(
                 listOf("E-Payment", "Credit Card"),
                 listOf(
                     listOf(
@@ -116,7 +116,7 @@ class TransactionsViewModel(
 
     fun handleContinueButtonClick(name: String = "") {
         when (_state.value.chosenScreen) {
-            "TopUp" -> updateAccountBalance()
+            "Transactions" -> updateAccountBalance()
             "Transfer" -> transferMoney(name)
         }
     }

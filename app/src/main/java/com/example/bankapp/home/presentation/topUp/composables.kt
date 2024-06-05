@@ -10,7 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 
 @Composable
-fun TopUpAppBar(onNavigate: () -> Unit) {
+fun TransactionsAppBar(onNavigate: () -> Unit) {
     TopAppBar(
         title = { Text("Top Up") },
         navigationIcon = {

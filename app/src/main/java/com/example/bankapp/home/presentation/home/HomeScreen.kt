@@ -165,7 +165,7 @@ fun ActionButtons(onNavigation: (String) -> Unit) {
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceEvenly
     ) {
-        ActionButton(text = "TopUp", color = Color(0xFF77DD77)){route -> onNavigation(route)}
+        ActionButton(text = "Transactions", color = Color(0xFF77DD77)){route -> onNavigation(route)}
         ActionButton(text = "Transfer", color = Color(0xFFFFD700)){route -> onNavigation(route)}
         ActionButton(text = "Withdraw", color = Color(0xFFFFA07A)){route -> onNavigation(route)}
     }

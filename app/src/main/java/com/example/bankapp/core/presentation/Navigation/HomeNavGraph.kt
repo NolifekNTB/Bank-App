@@ -22,7 +22,7 @@ fun NavGraphBuilder.homeNavGraph(
     ){
         composable(route = RoutesHome.HOME) {
             HomeScreen(auth = auth, onNavigation = { route ->
-                navController.navigate("TopUpGraph/$route")
+                navController.navigate("TransactionsGraph/$route")
             })
         }
 

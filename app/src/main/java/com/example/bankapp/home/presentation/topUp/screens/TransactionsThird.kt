@@ -20,7 +20,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.bankapp.home.presentation.Transactions.TopUpAppBar
+import com.example.bankapp.home.presentation.Transactions.TransactionsAppBar
 import com.example.bankapp.home.presentation.Transactions.TransactionsViewModel
 import com.example.bankapp.home.presentation.Transactions.mvi.TransactionsState
 
@@ -33,7 +33,7 @@ fun TransactionsThird(transactionsViewModel: TransactionsViewModel, onNavigate: 
 
     Scaffold(
         topBar = {
-            TopUpAppBar(){ onNavigate("back") }
+            TransactionsAppBar(){ onNavigate("back") }
         }
     ) {
         Column(
@@ -128,7 +128,7 @@ fun DetailRow(label: String, value: Float) {
 @Composable
 fun ContinueButton3(onNavigate: (String) -> Unit) {
     Button(
-        onClick = { onNavigate("topUp4") },
+        onClick = { onNavigate("Transactions4") },
         modifier = Modifier
             .fillMaxWidth()
             .height(56.dp),

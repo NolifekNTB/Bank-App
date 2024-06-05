@@ -18,7 +18,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.bankapp.home.presentation.Transactions.TransactionsViewModel
-import com.example.bankapp.home.presentation.Transactions.mvi.HomeThreeeScreensIntent
 import com.example.bankapp.home.presentation.Transactions.mvi.TransactionsIntent
 import com.example.bankapp.home.presentation.Transactions.mvi.TransactionsState
 
@@ -35,14 +34,14 @@ fun TransactionsFirst(
     }
 
     Scaffold(
-        topBar = { TopUpTopBar{ route -> onNavigate(route) }}
+        topBar = { TransactionsTopBar{ route -> onNavigate(route) }}
     ) {
-        TopUpContent(transactionsViewModel) { onNavigate("") }
+        TransactionsContent(transactionsViewModel) { onNavigate("") }
     }
 }
 
 @Composable
-fun TopUpTopBar(onNavigate: (String) -> Unit) {
+fun TransactionsTopBar(onNavigate: (String) -> Unit) {
      TopAppBar(
         title = { Text("Top Up") },
         navigationIcon = {
@@ -58,7 +57,7 @@ fun TopUpTopBar(onNavigate: (String) -> Unit) {
 }
 
 @Composable
-fun TopUpContent(
+fun TransactionsContent(
     transactionsViewModel: TransactionsViewModel,
     onNavigate: () -> Unit
 ) {
@@ -71,8 +70,8 @@ fun TopUpContent(
                 .background(Color(0xFFEDEFF3))
                 .padding(16.dp)
         ) {
-            TopUpHeader(state.chosenScreen)
-            TopUpOptions(state, transactionsViewModel, onNavigate)
+            TransactionsHeader(state.chosenScreen)
+            TransactionsOptions(state, transactionsViewModel, onNavigate)
         }
     } else {
         CircularProgressIndicator()
@@ -80,7 +79,7 @@ fun TopUpContent(
 }
 
 @Composable
-fun TopUpHeader(chosenScreen: String?) {
+fun TransactionsHeader(chosenScreen: String?) {
     Column {
         Text(
             text = if (chosenScreen == "Transfer") "Transfer Money" else "Top Up The Account",
@@ -98,7 +97,7 @@ fun TopUpHeader(chosenScreen: String?) {
 }
 
 @Composable
-fun TopUpOptions(
+fun TransactionsOptions(
     state: TransactionsState,
     transactionsViewModel: TransactionsViewModel,
     onNavigate: () -> Unit

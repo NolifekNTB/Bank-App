@@ -47,13 +47,13 @@ fun TransactionsSecond(transactionsViewModel: TransactionsViewModel, onNavigate:
             )
         }
     ) {
-        TopUpScreenContent(transactionsViewModel) { onNavigate("") }
+        TransactionsScreenContent(transactionsViewModel) { onNavigate("") }
 
     }
 }
 
 @Composable
-fun TopUpScreenContent(transactionsViewModel: TransactionsViewModel, onNavigate: () -> Unit) {
+fun TransactionsScreenContent(transactionsViewModel: TransactionsViewModel, onNavigate: () -> Unit) {
     val state = transactionsViewModel.state.collectAsState().value
 
     Column(
